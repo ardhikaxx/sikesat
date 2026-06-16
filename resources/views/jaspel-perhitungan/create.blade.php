@@ -33,18 +33,12 @@
                 <label class="form-label fw-semibold">Total Dana</label>
                 <input type="text" name="total_dana" class="form-control" required>
             </div>
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Status</label>
-                <select name="status" class="form-control" required>
-                    <option value="draft">Draft</option>
-                    <option value="verifikasi_ppk">Verifikasi PPK</option>
-                    <option value="approved_kepala">Approved Kepala</option>
-                    <option value="dicairkan">Dicairkan</option>
-                </select>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Sistem akan secara otomatis mengkalkulasi proporsi pembagian Jasa Pelayanan untuk seluruh pegawai yang aktif berdasarkan simulasi Poin Beban Kerja dan Kehadiran.
             </div>
             <hr>
             <div class="text-end mt-3">
-                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Simpan Data</button>
+                <button type="submit" class="btn btn-success px-4"><i class="fas fa-calculator"></i> Kalkulasi & Generate Jaspel</button>
             </div>
         </form>
     </div>

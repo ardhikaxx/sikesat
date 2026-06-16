@@ -50,7 +50,7 @@ Sistem ini memiliki puluhan entitas manajemen yang dibagi menjadi beberapa modul
 ### 5. 👥 Modul Kepegawaian (HRIS) & Jaspel
 *   **Manajemen Pegawai:** Pemantauan profil pegawai dan dokter medis.
 *   **Alert Kedaluwarsa Izin (SIP/STR):** Sistem proaktif memberikan peringatan otomatis jika masa berlaku SIP/STR dokter tersisa kurang dari 30 hari.
-*   **Perhitungan Jaspel (Jasa Pelayanan):** Kalkulasi insentif bulanan berbasis formula beban kerja.
+*   **Mesin Kalkulasi Jaspel (Jasa Pelayanan):** Fitur *One-Click Generator* untuk menghitung otomatis proporsi pembagian insentif bulanan ke seluruh pegawai secara adil berdasarkan simulasi Poin Beban Kerja dan Jabatan.
 
 ### 6. 📊 Modul Eksekutif & Laporan Dinkes
 *   **Dashboard Visual Interaktif:** Ringkasan sisa kas, trend pendapatan 12 bulan, peringatan stok menipis, dan peringatan kontrak vendor.
