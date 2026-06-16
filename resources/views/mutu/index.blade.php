@@ -55,7 +55,7 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        <button class="btn-action btn-action-view"><i class="fas fa-eye"></i></button>
+                        <a href="{{ route('indikator-mutu.show', $i->id) }}" class="btn-action btn-action-view"><i class="fas fa-eye"></i></a>
                     </td>
                 </tr>
                 @endforeach
