@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class JurnalDetail extends Model
 {
+    protected $guarded = [];
     //
 }
