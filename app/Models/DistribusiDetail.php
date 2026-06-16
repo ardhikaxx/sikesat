@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class DistribusiDetail extends Model
 {
+    protected $guarded = [];
     //
 }
