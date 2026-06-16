@@ -158,8 +158,8 @@
 @if(count($stokMenipis) > 0 || $countAlertSipStr > 0)
 <div class="row g-4">
     @if(count($stokMenipis) > 0)
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm rounded-3 h-100" style="border-top: 4px solid #f59e0b;">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-3" style="border-top: 4px solid #f59e0b;">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-4">
                     <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: #FFF3CD; color: #D4860B;">
@@ -196,8 +196,8 @@
     @endif
 
     @if($countAlertSipStr > 0)
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm rounded-3 h-100" style="border-top: 4px solid #ef4444;">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-3" style="border-top: 4px solid #ef4444;">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-4">
                     <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: #FEE2E2; color: #DC2626;">
