@@ -180,6 +180,9 @@
             <a href="{{ route('pengeluaran.index') }}" class="nav-item-link {{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}">
                 <i class="fas fa-file-invoice-dollar"></i> Pengeluaran
             </a>
+            <a href="{{ route('jaspel-perhitungan.index') }}" class="nav-item-link {{ request()->routeIs('jaspel-*') ? 'active' : '' }}">
+                <i class="fas fa-hand-holding-medical"></i> Jasa Pelayanan
+            </a>
             <a href="{{ route('jurnal.index') }}" class="nav-item-link {{ request()->routeIs('jurnal.*') ? 'active' : '' }}">
                 <i class="fas fa-book"></i> Akuntansi & Jurnal
             </a>
@@ -188,6 +191,9 @@
             </a>
             <a href="{{ route('mutu.index') }}" class="nav-item-link {{ request()->routeIs('mutu.*') ? 'active' : '' }}">
                 <i class="fas fa-heartbeat"></i> Mutu Layanan
+            </a>
+            <a href="{{ route('spm-indikator.index') }}" class="nav-item-link {{ request()->routeIs('spm-*') ? 'active' : '' }}">
+                <i class="fas fa-chart-line"></i> Kinerja BLUD (SPM)
             </a>
 
             <div class="px-3 py-2 text-muted fw-bold mt-2" style="font-size: 0.75rem; text-transform: uppercase;">Master Data</div>
