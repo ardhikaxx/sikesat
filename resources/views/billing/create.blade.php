@@ -122,19 +122,17 @@
                 </select>
             </td>
             <td>
-                <div class="input-text-wrapper" style="display:none;">
-                    <input type="text" name="items[${itemIndex}][nama_item]" class="form-control" placeholder="Nama Tindakan/Kamar">
-                </div>
-                <div class="input-tarif-wrapper">
-                    <select class="form-select tarif-select select2-dynamic" required onchange="setHargaTarif(this, ${itemIndex})">
+                <div class="input-select-wrapper">
+                    <select class="form-select item-select select2-dynamic" required onchange="setHarga(this)">
                         ${document.getElementById('tarifOptions').innerHTML}
                     </select>
                 </div>
-                <div class="input-obat-wrapper" style="display:none;">
-                    <select name="items[${itemIndex}][obat_id]" class="form-select obat-select select2-dynamic" onchange="setHargaObat(this, ${itemIndex})">
-                        ${document.getElementById('obatOptions').innerHTML}
-                    </select>
+                <div class="input-text-wrapper" style="display:none;">
+                    <input type="text" class="form-control manual-name-input" placeholder="Nama Tindakan/Kamar" oninput="updateHiddenName(this)">
                 </div>
+                <!-- Hidden inputs for backend -->
+                <input type="hidden" name="items[${itemIndex}][nama_item]" class="hidden-nama-item">
+                <input type="hidden" name="items[${itemIndex}][obat_id]" class="hidden-obat-id">
             </td>
             <td>
                 <input type="number" name="items[${itemIndex}][jumlah]" class="form-control text-center qty-input" value="1" min="1" required oninput="calcSub(this)">
@@ -151,104 +149,92 @@
         `;
         tbody.appendChild(tr);
         
-        // Inisialisasi Select2 untuk baris yang baru ditambahkan
+        // Init Select2
         $(tr).find('.select2-dynamic').select2({
             theme: 'bootstrap-5',
             width: '100%'
         });
+        
+        // Trigger select change once to set initial hidden fields
+        $(tr).find('.item-select').trigger('change');
         
         itemIndex++;
     }
 
     function changeJenis(select) {
         const tr = select.closest('tr');
+        const jenis = select.value;
+        const selectWrapper = tr.querySelector('.input-select-wrapper');
         const textWrapper = tr.querySelector('.input-text-wrapper');
-        const tarifWrapper = tr.querySelector('.input-tarif-wrapper');
-        const obatWrapper = tr.querySelector('.input-obat-wrapper');
-        
-        const textInput = textWrapper.querySelector('input');
-        const tarifSelect = tarifWrapper.querySelector('select');
-        const obatSelect = obatWrapper.querySelector('select');
-        
+        const itemSelect = tr.querySelector('.item-select');
+        const manualInput = tr.querySelector('.manual-name-input');
         const priceInput = tr.querySelector('.price-input');
 
-        if (select.value === 'Obat') {
-            textWrapper.style.display = 'none';
-            tarifWrapper.style.display = 'none';
-            obatWrapper.style.display = 'block';
-            
-            textInput.removeAttribute('required');
-            tarifSelect.removeAttribute('required');
-            obatSelect.setAttribute('required', 'required');
-            priceInput.readOnly = true;
-            
-            // Re-init select2 to fix width issue when shown from display:none
-            if ($(obatSelect).hasClass('select2-hidden-accessible')) {
-                $(obatSelect).select2('destroy');
-            }
-            $(obatSelect).select2({ theme: 'bootstrap-5', width: '100%' });
-
-        } else if (select.value === 'Lainnya') {
+        if (jenis === 'Lainnya') {
+            selectWrapper.style.display = 'none';
             textWrapper.style.display = 'block';
-            tarifWrapper.style.display = 'none';
-            obatWrapper.style.display = 'none';
             
-            textInput.setAttribute('required', 'required');
-            tarifSelect.removeAttribute('required');
-            obatSelect.removeAttribute('required');
+            manualInput.setAttribute('required', 'required');
+            itemSelect.removeAttribute('required');
             priceInput.readOnly = false;
-        } else {
-            // Tindakan atau Kamar
-            textWrapper.style.display = 'none';
-            tarifWrapper.style.display = 'block';
-            obatWrapper.style.display = 'none';
+            priceInput.value = 0;
             
-            textInput.removeAttribute('required');
-            tarifSelect.setAttribute('required', 'required');
-            obatSelect.removeAttribute('required');
+            tr.querySelector('.hidden-nama-item').value = manualInput.value;
+            tr.querySelector('.hidden-obat-id').value = '';
+        } else {
+            selectWrapper.style.display = 'block';
+            textWrapper.style.display = 'none';
+            
+            manualInput.removeAttribute('required');
+            itemSelect.setAttribute('required', 'required');
             priceInput.readOnly = true;
             
-            // Re-init select2 to fix width issue when shown from display:none
-            if ($(tarifSelect).hasClass('select2-hidden-accessible')) {
-                $(tarifSelect).select2('destroy');
+            // Hancurkan select2 sementara
+            $(itemSelect).select2('destroy');
+            
+            // Ganti opsi berdasarkan jenis
+            if (jenis === 'Obat') {
+                $(itemSelect).html(document.getElementById('obatOptions').innerHTML);
+            } else {
+                $(itemSelect).html(document.getElementById('tarifOptions').innerHTML);
             }
-            $(tarifSelect).select2({ theme: 'bootstrap-5', width: '100%' });
+            
+            // Re-init Select2
+            $(itemSelect).select2({ theme: 'bootstrap-5', width: '100%' });
+            $(itemSelect).val('').trigger('change');
         }
         
-        // Reset values
-        priceInput.value = 0;
         calcSub(priceInput);
     }
 
-    function setHargaTarif(select, index) {
+    function setHarga(select) {
         const tr = select.closest('tr');
         const priceInput = tr.querySelector('.price-input');
         const option = select.options[select.selectedIndex];
+        const jenis = tr.querySelector('.jenis-select').value;
         
-        if (option.value) {
-            priceInput.value = option.getAttribute('data-harga');
-            const textInput = tr.querySelector('.input-text-wrapper input');
-            textInput.value = option.text.split(' (Rp')[0];
+        if (option && option.value) {
+            priceInput.value = option.getAttribute('data-harga') || 0;
+            
+            const extractedName = option.text.split(' (Rp')[0];
+            tr.querySelector('.hidden-nama-item').value = extractedName;
+            
+            if (jenis === 'Obat') {
+                tr.querySelector('.hidden-obat-id').value = option.value;
+            } else {
+                tr.querySelector('.hidden-obat-id').value = '';
+            }
         } else {
             priceInput.value = 0;
+            tr.querySelector('.hidden-nama-item').value = '';
+            tr.querySelector('.hidden-obat-id').value = '';
         }
         calcSub(priceInput);
     }
 
-    function setHargaObat(select, index) {
-        const tr = select.closest('tr');
-        const priceInput = tr.querySelector('.price-input');
-        const option = select.options[select.selectedIndex];
-        
-        if (option.value) {
-            priceInput.value = option.getAttribute('data-harga');
-            // Set nama item juga
-            const textInput = tr.querySelector('.input-text-wrapper input');
-            textInput.value = option.text.split(' (Rp')[0]; // Extract name
-        } else {
-            priceInput.value = 0;
-        }
-        calcSub(priceInput);
+    function updateHiddenName(input) {
+        const tr = input.closest('tr');
+        tr.querySelector('.hidden-nama-item').value = input.value;
     }
 
     function calcSub(el) {
