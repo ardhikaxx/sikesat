@@ -402,6 +402,43 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // ==========================================
+        // 14. SPM Indikator & Capaian
+        // ==========================================
+        $spmList = [
+            ['jenis_layanan' => 'Pelayanan Gawat Darurat', 'indikator' => 'Waktu tanggap pelayanan Dokter di Gawat Darurat <= 5 menit', 'standar_persentase' => 100],
+            ['jenis_layanan' => 'Pelayanan Rawat Jalan', 'indikator' => 'Waktu tunggu di Rawat Jalan <= 60 menit', 'standar_persentase' => 100],
+            ['jenis_layanan' => 'Pelayanan Rawat Inap', 'indikator' => 'Tidak adanya kejadian pasien jatuh yang berakibat cacat/kematian', 'standar_persentase' => 100],
+            ['jenis_layanan' => 'Pelayanan Bedah', 'indikator' => 'Waktu tunggu operasi elektif <= 2 hari', 'standar_persentase' => 100],
+            ['jenis_layanan' => 'Pelayanan Farmasi', 'indikator' => 'Waktu tunggu pelayanan resep obat jadi <= 30 menit', 'standar_persentase' => 100],
+            ['jenis_layanan' => 'Pelayanan Rekam Medis', 'indikator' => 'Waktu penyediaan dokumen rekam medis rawat jalan <= 10 menit', 'standar_persentase' => 100],
+            ['jenis_layanan' => 'Pelayanan Laboratorium', 'indikator' => 'Waktu tunggu hasil pelayanan laboratorium <= 120 menit', 'standar_persentase' => 100],
+        ];
+
+        $spmIds = [];
+        foreach ($spmList as $spm) {
+            $spmIds[] = DB::table('spm_indikators')->insertGetId([
+                'jenis_layanan' => $spm['jenis_layanan'],
+                'indikator' => $spm['indikator'],
+                'standar_persentase' => $spm['standar_persentase'],
+                'is_aktif' => 1,
+                'created_at' => Carbon::now(),
+            ]);
+        }
+
+        foreach ($spmIds as $spmId) {
+            for ($bulan = 1; $bulan <= 12; $bulan++) {
+                DB::table('spm_capaians')->insert([
+                    'spm_indikator_id' => $spmId,
+                    'periode_bulan' => $bulan,
+                    'periode_tahun' => 2026,
+                    'nilai_capaian' => rand(85, 100), // Random capaian 85% to 100%
+                    'keterangan' => 'Tercapai dengan baik',
+                    'created_at' => Carbon::now()->subMonths(12 - $bulan),
+                ]);
+            }
+        }
+
         $this->command->info('Database Seeded Successfully with Massive Realistic Dummy Data!');
     }
 }
