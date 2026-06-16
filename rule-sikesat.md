@@ -117,6 +117,8 @@ Alpine.js (CDN) — reaktivitas ringan tanpa build step
 | Persediaan Obat & Alkes | CRUD | R | R | — | — | R | CRUD | R | R | R |
 | Manajemen Aset | CRUD | R | V | — | — | R | — | R | R | — |
 | Monitoring Mutu Layanan | CRUD | R | R | — | — | R | — | — | R | CRUD |
+| Jasa Pelayanan (Jaspel) | CRUD | Approve | V | R | — | R | — | — | R | R |
+| Kinerja BLUD (SPM) | CRUD | R | R | — | — | R | — | — | R | — |
 | Dashboard Eksekutif | R | R | R | R | R | R | — | — | R | — |
 | Audit Log | R | — | — | — | — | — | — | — | R | — |
 | Konfigurasi Sistem | CRUD | — | — | — | — | — | — | — | — | — |
@@ -804,7 +806,74 @@ CREATE TABLE survei_kepuasans (
 );
 ```
 
-### 4.10 Sistem & Log
+### 4.10 Modul Jasa Pelayanan (Jaspel)
+
+```sql
+-- jaspel_parameters
+CREATE TABLE jaspel_parameters (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    nama_parameter VARCHAR(100) NOT NULL,
+    bobot DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    is_aktif TINYINT DEFAULT 1,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- jaspel_perhitungans
+CREATE TABLE jaspel_perhitungans (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    periode_bulan TINYINT NOT NULL,
+    periode_tahun YEAR NOT NULL,
+    sumber_dana ENUM('BPJS','Umum','BOK') NOT NULL,
+    total_dana DECIMAL(15,2) NOT NULL,
+    status ENUM('draft','verifikasi_ppk','approved_kepala','dicairkan') DEFAULT 'draft',
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- jaspel_details
+CREATE TABLE jaspel_details (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    jaspel_perhitungan_id BIGINT UNSIGNED NOT NULL,
+    pegawai_id BIGINT UNSIGNED NOT NULL,
+    skor_total DECIMAL(8,2) NOT NULL DEFAULT 0,
+    nominal_diterima DECIMAL(15,2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (jaspel_perhitungan_id) REFERENCES jaspel_perhitungans(id) ON DELETE CASCADE,
+    FOREIGN KEY (pegawai_id) REFERENCES pegawais(id) ON DELETE CASCADE
+);
+```
+
+### 4.11 Laporan Kinerja BLUD (SPM)
+
+```sql
+-- spm_indikators
+CREATE TABLE spm_indikators (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    jenis_layanan VARCHAR(150) NOT NULL,
+    indikator VARCHAR(255) NOT NULL,
+    standar_persentase DECIMAL(5,2) NOT NULL,
+    is_aktif TINYINT DEFAULT 1,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- spm_capaians
+CREATE TABLE spm_capaians (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    spm_indikator_id BIGINT UNSIGNED NOT NULL,
+    periode_bulan TINYINT NOT NULL,
+    periode_tahun YEAR NOT NULL,
+    nilai_capaian DECIMAL(5,2) NOT NULL,
+    keterangan TEXT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (spm_indikator_id) REFERENCES spm_indikators(id) ON DELETE CASCADE
+);
+```
+
+### 4.12 Sistem & Log
 
 ```sql
 -- audit_logs (Spatie Activity Log + custom)
