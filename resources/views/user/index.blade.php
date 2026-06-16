@@ -10,7 +10,7 @@
         <h1 class="page-header__title"><i class="fas fa-users-cog"></i> Manajemen Pengguna & Akses</h1>
     </div>
     <div class="page-header__actions">
-        <button class="btn-primary-sikesat"><i class="fas fa-user-plus"></i> Tambah Pengguna</button>
+        <a href="{{ route('user.create') }}" class="btn-primary-sikesat text-decoration-none"><i class="fas fa-user-plus"></i> Tambah Pengguna</a>
     </div>
 </div>
 
@@ -46,7 +46,15 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        <a href="{{ route('user.edit', $user->id) }}" class="btn-action btn-action-edit"><i class="fas fa-pen"></i></a>
+                        <div class="d-flex justify-content-center gap-1">
+                            <a href="{{ route('user.edit', $user->id) }}" class="btn-action btn-action-edit" title="Edit Pengguna"><i class="fas fa-pen"></i></a>
+                            @if($user->id != 1 && $user->id != auth()->id())
+                            <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pengguna ini secara permanen?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn-action btn-action-delete" title="Hapus Pengguna"><i class="fas fa-trash"></i></button>
+                            </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @endforeach

@@ -43,4 +43,45 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->with('sukses', 'Pengguna berhasil diperbarui');
     }
+
+    public function create()
+    {
+        $roles = \Spatie\Permission\Models\Role::all();
+        return view('user.create', compact('roles'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+            'nip' => 'nullable|string|max:50',
+            'roles' => 'array'
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'nip' => $request->nip,
+            'is_active' => $request->has('is_active'),
+        ]);
+
+        if ($request->has('roles')) {
+            $user->syncRoles($request->roles);
+        }
+
+        return redirect()->route('user.index')->with('sukses', 'Pengguna berhasil ditambahkan');
+    }
+
+    public function destroy(User $user)
+    {
+        if ($user->id == 1 || $user->id == auth()->id()) {
+            return redirect()->route('user.index')->with('error', 'Tidak dapat menghapus diri sendiri atau Super Admin Utama.');
+        }
+
+        $user->delete();
+        return redirect()->route('user.index')->with('sukses', 'Pengguna berhasil dihapus');
+    }
 }
