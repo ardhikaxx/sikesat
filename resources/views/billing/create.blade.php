@@ -78,7 +78,12 @@
 <select id="obatOptions" style="display:none;">
     <option value="">-- Pilih Obat --</option>
     @foreach($obats as $o)
-        <option value="{{ $o->id }}" data-harga="{{ $o->harga_jual }}">{{ $o->nama_obat }} (Rp {{ number_format($o->harga_jual, 0, ',', '.') }})</option>
+        @php
+            // Cari harga perolehan dari stok terbaru, jika tidak ada gunakan default 
+            $stok = \App\Models\StokGudang::where('obat_alkes_id', $o->id)->latest()->first();
+            $hargaJual = $stok && $stok->harga_perolehan > 0 ? ($stok->harga_perolehan * 1.2) : (10000 + ($o->id * 1000));
+        @endphp
+        <option value="{{ $o->id }}" data-harga="{{ $hargaJual }}">{{ $o->kode_barang }} - {{ $o->nama_generik }} (Rp {{ number_format($hargaJual, 0, ',', '.') }})</option>
     @endforeach
 </select>
 
