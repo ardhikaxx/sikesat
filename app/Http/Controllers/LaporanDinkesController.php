@@ -29,7 +29,7 @@ class LaporanDinkesController extends Controller
         $bulan = $request->bulan;
         $tahun = $request->tahun;
 
-        $namaBulan = Carbon::create()->month($bulan)->translatedFormat('F');
+        $namaBulan = Carbon::create()->month((int) $bulan)->translatedFormat('F');
         $title = "Laporan $jenis - $namaBulan $tahun";
 
         if ($jenis == 'LB1') {
