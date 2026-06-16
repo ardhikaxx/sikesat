@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class StokGudang extends Model
 {
+    protected $guarded = [];
     //
 }
