@@ -123,9 +123,7 @@
             </td>
             <td>
                 <div class="input-select-wrapper">
-                    <select class="form-select item-select select2-dynamic" required onchange="setHarga(this)">
-                        ${document.getElementById('tarifOptions').innerHTML}
-                    </select>
+                    <select class="form-select item-select select2-dynamic" required onchange="setHarga(this)"></select>
                 </div>
                 <div class="input-text-wrapper" style="display:none;">
                     <input type="text" class="form-control manual-name-input" placeholder="Nama Tindakan/Kamar" oninput="updateHiddenName(this)">
@@ -149,14 +147,9 @@
         `;
         tbody.appendChild(tr);
         
-        // Init Select2
-        $(tr).find('.select2-dynamic').select2({
-            theme: 'bootstrap-5',
-            width: '100%'
-        });
-        
-        // Trigger select change once to set initial hidden fields
-        $(tr).find('.item-select').trigger('change');
+        // Panggil changeJenis untuk inisialisasi dropdown secara sempurna (termasuk memuat opsi dan select2)
+        const jenisSelect = tr.querySelector('.jenis-select');
+        changeJenis(jenisSelect);
         
         itemIndex++;
     }
