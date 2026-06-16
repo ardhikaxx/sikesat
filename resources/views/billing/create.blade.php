@@ -189,8 +189,12 @@
             itemSelect.setAttribute('required', 'required');
             priceInput.readOnly = true;
             
-            // Hancurkan select2 sementara
-            $(itemSelect).select2('destroy');
+            // Hancurkan select2 sementara dengan aman
+            if ($(itemSelect).hasClass('select2-hidden-accessible')) {
+                $(itemSelect).select2('destroy');
+            }
+            // Hapus paksa container Select2 lama yang tertinggal di DOM (mencegah duplikasi)
+            $(itemSelect).siblings('.select2-container').remove();
             
             // Ganti opsi berdasarkan jenis
             if (jenis === 'Obat') {
