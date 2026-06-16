@@ -249,6 +249,17 @@
                 <i class="fas fa-file-invoice"></i> Laporan Keuangan
             </a>
 
+            <div class="sidebar-section-title">PELAYANAN PASIEN</div>
+            <a href="{{ route('pasien.index') }}" class="nav-item-link {{ request()->routeIs('pasien.*') ? 'active' : '' }}">
+                <i class="fas fa-user-injured"></i> Data Pasien
+            </a>
+            <a href="{{ route('billing.index') }}" class="nav-item-link {{ request()->routeIs('billing.*') ? 'active' : '' }}">
+                <i class="fas fa-cash-register"></i> Kasir / Billing Pasien
+            </a>
+            <a href="{{ route('kunjungan-pasien.index') }}" class="nav-item-link {{ request()->routeIs('kunjungan-pasien.*') ? 'active' : '' }}">
+                <i class="fas fa-notes-medical"></i> Kunjungan Pasien
+            </a>
+
             <div class="sidebar-section-title">Master Data</div>
             <a href="{{ route('obat.index') }}" class="nav-item-link {{ request()->routeIs('obat*', 'distribusi*') ? 'active' : '' }}">
                 <i class="fas fa-pills"></i> Obat & Alkes

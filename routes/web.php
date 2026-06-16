@@ -99,4 +99,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('tahun-anggaran', App\Http\Controllers\TahunAnggaranController::class);
     Route::resource('unit-pelayanan', App\Http\Controllers\UnitPelayananController::class);
     Route::resource('kontrak', App\Http\Controllers\KontrakPihakKetigaController::class);
+    
+    // Billing / Kasir Pasien
+    Route::post('billing/{id}/pay', [App\Http\Controllers\BillingPasienController::class, 'pay'])->name('billing.pay');
+    Route::resource('billing', App\Http\Controllers\BillingPasienController::class);
 });
