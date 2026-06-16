@@ -114,7 +114,7 @@
             <div class="kpi-card__body w-100">
                 <span class="kpi-card__label">Sisa Kas BLUD</span>
                 <span class="kpi-card__value">Rp {{ number_format($sisaKas / 1000000, 1, ',', '.') }} Jt</span>
-                <span class="kpi-card__sub text-success">Surplus / Defisit</span>
+                <span class="kpi-card__sub text-success">Saldo Keseluruhan</span>
             </div>
         </div>
     </div>

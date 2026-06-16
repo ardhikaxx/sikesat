@@ -24,8 +24,16 @@ class DashboardController extends Controller
             ->whereIn('status', ['dibayar', 'disetujui'])
             ->sum('jumlah_neto');
 
-        // 3. Sisa Kas
-        $sisaKas = $totalPendapatan - $totalPengeluaran;
+        // 3. Sisa Kas (Keseluruhan / All Time)
+        $totalPenerimaanAll = DB::table('penerimaan_kass')
+            ->where('status', 'posted')
+            ->sum('jumlah');
+            
+        $totalPengeluaranAll = DB::table('pengeluaran_kass')
+            ->whereIn('status', ['dibayar', 'disetujui'])
+            ->sum('jumlah_neto');
+
+        $sisaKas = $totalPenerimaanAll - $totalPengeluaranAll;
 
         // 4. Kunjungan Pasien (Dummy for now, count pegawais if pasiens table is empty or just a static number if not available)
         // Check if pasiens exist
