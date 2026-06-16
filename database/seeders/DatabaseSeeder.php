@@ -478,14 +478,47 @@ class DatabaseSeeder extends Seeder
         }
 
         // ==========================================
-        // 17. Billing Pasien
+        // 17. Data Pasien
+        // ==========================================
+        $firstNamesL = ['Budi', 'Agus', 'Andi', 'Rudi', 'Hendra', 'Eko', 'Dedi', 'Bambang', 'Ahmad', 'Reza', 'Surya', 'Teguh', 'Arif', 'Herman', 'Iwan', 'Joko', 'Slamet', 'Tono'];
+        $firstNamesP = ['Siti', 'Ayu', 'Rini', 'Dewi', 'Sri', 'Nina', 'Lestari', 'Fitri', 'Nurul', 'Anita', 'Maya', 'Rika', 'Dina', 'Putri', 'Sari', 'Indah', 'Wati', 'Tini'];
+        $lastNames = ['Setiawan', 'Pratama', 'Saputra', 'Wijaya', 'Kurniawan', 'Hidayat', 'Santoso', 'Gunawan', 'Nugroho', 'Wibowo', 'Wahyudi', 'Lubis', 'Siregar', 'Harahap', 'Kusuma'];
+        
+        $pasiens = [];
+        for ($i = 1; $i <= 200; $i++) {
+            $jk = rand(0, 1) ? 'L' : 'P';
+            $fName = $jk == 'L' ? $firstNamesL[array_rand($firstNamesL)] : $firstNamesP[array_rand($firstNamesP)];
+            $lName = $lastNames[array_rand($lastNames)];
+            $jenis_pasien = rand(1, 100) > 40 ? 'BPJS' : (rand(1, 100) > 10 ? 'Umum' : 'Gratis');
+            
+            $pasiens[] = [
+                'no_rm' => 'RM-' . date('Y') . '-' . str_pad($i, 5, '0', STR_PAD_LEFT),
+                'nik' => '327' . rand(1000000000000, 9999999999999),
+                'nama' => $fName . ' ' . $lName,
+                'jenis_kelamin' => $jk,
+                'tanggal_lahir' => Carbon::now()->subYears(rand(1, 70))->subMonths(rand(1, 11))->subDays(rand(1, 28))->format('Y-m-d'),
+                'alamat' => 'Jl. Merdeka No. ' . rand(1, 200) . ', Kota Contoh',
+                'no_telepon' => '08' . rand(1111111111, 9999999999),
+                'jenis_pasien' => $jenis_pasien,
+                'no_bpjs' => $jenis_pasien == 'BPJS' ? '000' . rand(1000000000, 9999999999) : null,
+                'faskes_tingkat_satu' => $jenis_pasien == 'BPJS' ? 'Puskesmas Contoh' : null,
+                'created_at' => Carbon::now()->subDays(rand(1, 365)),
+            ];
+        }
+        // Insert chunks of 100
+        foreach (array_chunk($pasiens, 100) as $chunk) {
+            DB::table('pasiens')->insert($chunk);
+        }
+
+        // ==========================================
+        // 18. Billing Pasien
         // ==========================================
         $pasienIds = DB::table('pasiens')->pluck('id')->toArray();
         $obatIds = DB::table('obat_alkes')->pluck('id')->toArray();
         
         if (count($pasienIds) > 0) {
-            for ($i = 1; $i <= 30; $i++) {
-                $isPaid = rand(1, 10) > 3; // 70% paid
+            for ($i = 1; $i <= 200; $i++) {
+                $isPaid = rand(1, 10) > 2; // 80% paid
                 $totalBilling = 0;
                 
                 $billingId = DB::table('billing_pasiens')->insertGetId([
@@ -546,6 +579,40 @@ class DatabaseSeeder extends Seeder
 
                 DB::table('billing_pasiens')->where('id', $billingId)->update(['total_tagihan' => $totalBilling]);
             }
+        }
+
+        // ==========================================
+        // 19. Data Kunjungan Pasien (Statistik Harian)
+        // ==========================================
+        $kunjunganUnits = [$poliUmumId ?? 1, $tuId ?? 1, $gudangId ?? 1, 2, 6, 7]; // Beberapa unit layanan utama
+        $startDate = Carbon::now()->subMonths(6);
+        $endDate = Carbon::now();
+        
+        $kunjungans = [];
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            foreach ($kunjunganUnits as $uid) {
+                // Jangan setiap unit setiap hari ada, berikan probabilitas
+                if (rand(1, 100) > 10) {
+                    $umum = rand(5, 30);
+                    $bpjs = rand(10, 80);
+                    $gratis = rand(0, 5);
+                    $kunjungans[] = [
+                        'unit_id' => $uid,
+                        'tanggal' => $date->format('Y-m-d'),
+                        'jumlah_kunjungan_umum' => $umum,
+                        'jumlah_kunjungan_bpjs' => $bpjs,
+                        'jumlah_kunjungan_gratis' => $gratis,
+                        'total_kunjungan' => $umum + $bpjs + $gratis,
+                        'rata_waktu_tunggu' => rand(15, 45) + (rand(0, 99) / 100),
+                        'input_oleh' => 1,
+                        'created_at' => Carbon::now()
+                    ];
+                }
+            }
+        }
+        // Insert chunks of 200
+        foreach (array_chunk($kunjungans, 200) as $chunk) {
+            DB::table('kunjungan_pasiens')->insert($chunk);
         }
 
         $this->command->info('Database Seeded Successfully with Massive Realistic Dummy Data!');

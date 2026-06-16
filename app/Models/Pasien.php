@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Pasien extends Model
 {
     protected $guarded = [];
-    //
+    
+    public function getNamaLengkapAttribute()
+    {
+        return $this->nama;
+    }
 }
