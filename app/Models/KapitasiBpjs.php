@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class KapitasiBpjs extends Model
 {
+    protected $guarded = [];
     //
 }
