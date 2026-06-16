@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PenerimaanKasDetail extends Model
 {
+    protected $guarded = [];
     //
 }
