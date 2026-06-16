@@ -291,9 +291,9 @@
                     <li><a class="dropdown-item" href="#"><i class="fas fa-user fa-fw text-muted me-2"></i> Profil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form action="{{ route('logout') }}" method="POST" id="form-logout">
                             @csrf
-                            <button type="submit" class="dropdown-item text-danger">
+                            <button type="button" class="dropdown-item text-danger" onclick="konfirmasiLogout()">
                                 <i class="fas fa-sign-out-alt fa-fw me-2"></i> Logout
                             </button>
                         </form>
@@ -330,8 +330,46 @@
                 return Swal.fire({
                     icon: 'error', title: 'Gagal!', text: pesan, confirmButtonColor: '#C0392B',
                 });
+            },
+            konfirmasi: (judul, pesan, callback) => {
+                return Swal.fire({
+                    title: judul,
+                    text: pesan,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C0392B',
+                    cancelButtonColor: '#718096',
+                    confirmButtonText: 'Ya, Lanjutkan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        callback();
+                    }
+                });
             }
         };
+
+        function konfirmasiLogout() {
+            SikeAlert.konfirmasi('Konfirmasi Logout', 'Apakah Anda yakin ingin keluar dari aplikasi?', function() {
+                document.getElementById('form-logout').submit();
+            });
+        }
+
+        // Global confirmation for delete buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForms = document.querySelectorAll('form[action*="destroy"], form.form-delete');
+            deleteForms.forEach(form => {
+                // remove the standard JS confirm if it exists
+                form.removeAttribute('onsubmit');
+                
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    SikeAlert.konfirmasi('Hapus Data?', 'Data yang dihapus tidak dapat dikembalikan!', function() {
+                        form.submit();
+                    });
+                });
+            });
+        });
 
         @if(session('sukses'))
             SikeAlert.sukses('{{ session('sukses') }}');
