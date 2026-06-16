@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PengeluaranKasDetail extends Model
 {
+    protected $guarded = [];
     //
 }
