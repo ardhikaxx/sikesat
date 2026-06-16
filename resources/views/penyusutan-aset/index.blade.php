@@ -1,44 +1,46 @@
 @extends('layouts.app')
-@section('title', 'Data PenyusutanAset - SIKESAT')
+@section('title', 'Penyusutan Aset - SIKESAT')
 @section('content')
 <div class="page-header">
     <div class="page-header__left">
-        <h1 class="page-header__title"><i class="fas fa-table"></i> Data PenyusutanAset</h1>
+        <h1 class="page-header__title"><i class="fas fa-chart-line"></i> Penyusutan Aset Otomatis</h1>
+        <p class="text-muted mb-0">Manajemen depresiasi nilai buku aset per bulan.</p>
     </div>
     <div class="page-header__actions">
-        <a href="{{ route('penyusutan-aset.create') }}" class="btn-primary-sikesat"><i class="fas fa-plus"></i> Tambah Data</a>
+        <form action="{{ route('penyusutan-aset.generate') }}" method="POST" class="d-inline" onsubmit="return confirm('Proses ini akan menghitung penyusutan untuk semua aset aktif di bulan ini. Lanjutkan?')">
+            @csrf
+            <button type="submit" class="btn-primary-sikesat"><i class="fas fa-magic"></i> Hitung Penyusutan Bulan Ini</button>
+        </form>
     </div>
 </div>
+
+@if(session('success'))
+<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i> {{ session('success') }}</div>
+@endif
+
 <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-4">
         <div class="table-responsive">
-            <table class="table sikesat-table">
+            <table class="table sikesat-table" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Aset Id</th>
-                        <th>Periode Bulan</th>
-                        <th>Periode Tahun</th>
-                        <th>Nilai Penyusutan</th>
-                        <th class="text-center">Aksi</th>
+                        <th>Bulan/Tahun</th>
+                        <th>Nama Aset</th>
+                        <th class="text-end">Nilai Perolehan</th>
+                        <th class="text-end">Penyusutan Bln Ini</th>
+                        <th class="text-end">Akumulasi</th>
+                        <th class="text-end">Nilai Buku Skrg</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($data as $item)
                     <tr>
-                        <td>{{ $item->aset_id }}</td>
-                        <td>{{ $item->periode_bulan }}</td>
-                        <td>{{ $item->periode_tahun }}</td>
-                        <td>{{ $item->nilai_penyusutan }}</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-1">
-                                <a href="{{ route('penyusutan-aset.show', $item->id) }}" class="btn-action btn-action-view"><i class="fas fa-eye"></i></a>
-                                <a href="{{ route('penyusutan-aset.edit', $item->id) }}" class="btn-action btn-action-edit"><i class="fas fa-pen"></i></a>
-                                <form action="{{ route('penyusutan-aset.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus data ini?')">
-                                    @csrf @method('DELETE')
-                                    <button class="btn-action btn-action-delete"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </div>
-                        </td>
+                        <td class="fw-bold">{{ str_pad($item->periode_bulan, 2, '0', STR_PAD_LEFT) }} / {{ $item->periode_tahun }}</td>
+                        <td>{{ $item->aset ? $item->aset->nama_aset : 'Aset Dihapus' }}</td>
+                        <td class="text-end">Rp {{ $item->aset ? number_format($item->aset->nilai_perolehan, 0, ',', '.') : 0 }}</td>
+                        <td class="text-end text-danger fw-semibold">- Rp {{ number_format($item->nilai_penyusutan, 0, ',', '.') }}</td>
+                        <td class="text-end text-warning text-dark">Rp {{ number_format($item->akumulasi_penyusutan, 0, ',', '.') }}</td>
+                        <td class="text-end fw-bold text-success">Rp {{ number_format($item->nilai_buku_sesudah, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
                 </tbody>

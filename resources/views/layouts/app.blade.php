@@ -265,6 +265,9 @@
             <a href="{{ route('supplier.index') }}" class="nav-item-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
                 <i class="fas fa-truck"></i> Supplier
             </a>
+            <a href="{{ route('kontrak.index') }}" class="nav-item-link {{ request()->routeIs('kontrak.*') ? 'active' : '' }}">
+                <i class="fas fa-handshake"></i> Manajemen Kontrak
+            </a>
             <a href="{{ route('aset.index') }}" class="nav-item-link {{ request()->routeIs('aset*', 'penyusutan-aset*', 'pemeliharaan-aset*') ? 'active' : '' }}">
                 <i class="fas fa-desktop"></i> Inventaris Aset
             </a>

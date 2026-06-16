@@ -443,6 +443,20 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // ==========================================
+        // 15. Kontrak Pihak Ketiga (KSO & Limbah)
+        // ==========================================
+        $kontraks = [
+            ['nomor_kontrak' => 'KTR/2026/001', 'nama_vendor' => 'PT Medika Lab Indo', 'jenis_kontrak' => 'KSO_Alat', 'tanggal_mulai' => Carbon::now()->subMonths(10)->format('Y-m-d'), 'tanggal_selesai' => Carbon::now()->addDays(20)->format('Y-m-d'), 'nilai_kontrak' => 150000000, 'status' => 'Aktif'],
+            ['nomor_kontrak' => 'KTR/2026/002', 'nama_vendor' => 'CV Hijau Lestari', 'jenis_kontrak' => 'Limbah_B3', 'tanggal_mulai' => Carbon::now()->subMonths(11)->format('Y-m-d'), 'tanggal_selesai' => Carbon::now()->addDays(15)->format('Y-m-d'), 'nilai_kontrak' => 50000000, 'status' => 'Aktif'],
+            ['nomor_kontrak' => 'KTR/2026/003', 'nama_vendor' => 'PT Cendana Security', 'jenis_kontrak' => 'Jasa_Keamanan', 'tanggal_mulai' => Carbon::now()->subMonths(6)->format('Y-m-d'), 'tanggal_selesai' => Carbon::now()->addDays(-5)->format('Y-m-d'), 'nilai_kontrak' => 120000000, 'status' => 'Selesai'],
+            ['nomor_kontrak' => 'KTR/2026/004', 'nama_vendor' => 'PT IT Health Solution', 'jenis_kontrak' => 'IT_System', 'tanggal_mulai' => Carbon::now()->subMonths(2)->format('Y-m-d'), 'tanggal_selesai' => Carbon::now()->addMonths(10)->format('Y-m-d'), 'nilai_kontrak' => 75000000, 'status' => 'Aktif'],
+        ];
+
+        foreach ($kontraks as $k) {
+            DB::table('kontrak_pihak_ketigas')->insert(array_merge($k, ['created_at' => Carbon::now()]));
+        }
+
         $this->command->info('Database Seeded Successfully with Massive Realistic Dummy Data!');
     }
 }

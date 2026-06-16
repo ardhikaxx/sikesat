@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pengajuan-pengadaan-item', App\Http\Controllers\PengajuanPengadaanItemController::class);
     Route::resource('pengeluaran-kas', App\Http\Controllers\PengeluaranKasController::class);
     Route::resource('pengeluaran-kas-detail', App\Http\Controllers\PengeluaranKasDetailController::class);
+    Route::post('penyusutan-aset/generate', [App\Http\Controllers\PenyusutanAsetController::class, 'generate'])->name('penyusutan-aset.generate');
     Route::resource('penyusutan-aset', App\Http\Controllers\PenyusutanAsetController::class);
     Route::resource('realisasi-indikator-mutu', App\Http\Controllers\RealisasiIndikatorMutuController::class);
     Route::resource('rencana-bisnis-anggaran', App\Http\Controllers\RencanaBisnisAnggaranController::class);
@@ -97,4 +98,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('survei-kepuasan', App\Http\Controllers\SurveiKepuasanController::class);
     Route::resource('tahun-anggaran', App\Http\Controllers\TahunAnggaranController::class);
     Route::resource('unit-pelayanan', App\Http\Controllers\UnitPelayananController::class);
+    Route::resource('kontrak', App\Http\Controllers\KontrakPihakKetigaController::class);
 });

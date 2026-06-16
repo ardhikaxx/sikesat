@@ -9,8 +9,57 @@ class PenyusutanAsetController extends Controller
 {
     public function index()
     {
-        $data = PenyusutanAset::latest()->get();
+        $data = PenyusutanAset::with('aset')->latest()->get();
         return view('penyusutan-aset.index', compact('data'));
+    }
+
+    public function generate()
+    {
+        $bulan = date('m');
+        $tahun = date('Y');
+
+        $asets = \App\Models\Aset::with('kategori')->where('status', 'Aktif')->where('nilai_buku', '>', 0)->get();
+        $count = 0;
+
+        foreach ($asets as $aset) {
+            // Cek apakah sudah disusutkan bulan ini
+            $exists = PenyusutanAset::where('aset_id', $aset->id)
+                        ->where('periode_bulan', $bulan)
+                        ->where('periode_tahun', $tahun)
+                        ->exists();
+
+            if (!$exists && $aset->kategori && $aset->kategori->masa_manfaat_tahun > 0) {
+                // Hitung penyusutan garis lurus
+                $masaManfaatBulan = $aset->kategori->masa_manfaat_tahun * 12;
+                $penyusutanBulanIni = $aset->nilai_perolehan / $masaManfaatBulan;
+
+                // Jangan sampai nilai buku minus
+                if ($penyusutanBulanIni > $aset->nilai_buku) {
+                    $penyusutanBulanIni = $aset->nilai_buku;
+                }
+
+                $nilaiBukuBaru = $aset->nilai_buku - $penyusutanBulanIni;
+
+                // Hitung akumulasi
+                $akumulasiSebelumnya = PenyusutanAset::where('aset_id', $aset->id)->sum('nilai_penyusutan');
+                $akumulasiBaru = $akumulasiSebelumnya + $penyusutanBulanIni;
+
+                PenyusutanAset::create([
+                    'aset_id' => $aset->id,
+                    'periode_bulan' => $bulan,
+                    'periode_tahun' => $tahun,
+                    'nilai_penyusutan' => $penyusutanBulanIni,
+                    'akumulasi_penyusutan' => $akumulasiBaru,
+                    'nilai_buku_sesudah' => $nilaiBukuBaru,
+                ]);
+
+                // Update nilai buku aset
+                $aset->update(['nilai_buku' => $nilaiBukuBaru]);
+                $count++;
+            }
+        }
+
+        return redirect()->route('penyusutan-aset.index')->with('success', "Berhasil menghitung penyusutan untuk $count aset pada bulan $bulan/$tahun.");
     }
 
     public function create()

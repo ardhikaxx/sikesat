@@ -114,9 +114,21 @@ class DashboardController extends Controller
                       });
             })->count();
 
+        // 9. Alert Kontrak Pihak Ketiga Mau Habis
+        $alertKontrak = DB::table('kontrak_pihak_ketigas')
+            ->where('status', 'Aktif')
+            ->whereNotNull('tanggal_selesai')
+            ->where('tanggal_selesai', '<=', $thirtyDays)
+            ->select('nomor_kontrak', 'nama_vendor', 'jenis_kontrak', 'tanggal_selesai')
+            ->orderBy('tanggal_selesai', 'ASC')
+            ->get();
+            
+        $countAlertKontrak = $alertKontrak->count();
+
         return view('dashboard', compact(
             'year', 'totalPendapatan', 'totalPengeluaran', 'sisaKas', 'totalKunjungan',
-            'trendPendapatan', 'trendPengeluaran', 'pieLabels', 'pieData', 'stokMenipis', 'alertSipStr', 'countAlertSipStr'
+            'trendPendapatan', 'trendPengeluaran', 'pieLabels', 'pieData', 'stokMenipis', 'alertSipStr', 'countAlertSipStr',
+            'alertKontrak', 'countAlertKontrak'
         ));
     }
 }

@@ -155,7 +155,7 @@
     </div>
 </div>
 
-@if(count($stokMenipis) > 0 || $countAlertSipStr > 0)
+@if(count($stokMenipis) > 0 || $countAlertSipStr > 0 || $countAlertKontrak > 0)
 <div class="row g-4">
     @if(count($stokMenipis) > 0)
     <div class="col-12">
@@ -239,6 +239,52 @@
                                         @elseif($dStr <= 30) <span class="badge bg-warning text-dark">{{ intval($dStr) }} hr</span>
                                         @else <span class="badge bg-success">Aman</span> @endif
                                     @else <span class="text-muted">-</span> @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($countAlertKontrak > 0)
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-3" style="border-top: 4px solid #8B5CF6;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: #EDE9FE; color: #8B5CF6;">
+                        <i class="fas fa-handshake fa-lg"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Kontrak Pihak Ketiga Mau Habis</h6>
+                        <span class="badge" style="background-color: #8B5CF6;"><i class="fas fa-clock"></i> {{ $countAlertKontrak }} Kontrak Segera Berakhir</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.875rem;">
+                        <thead class="text-muted border-bottom">
+                            <tr>
+                                <th>Nomor & Nama Vendor</th>
+                                <th>Jenis Kontrak</th>
+                                <th>Status Berakhir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($alertKontrak as $ktrk)
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold text-dark">{{ $ktrk->nama_vendor }}</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ $ktrk->nomor_kontrak }}</div>
+                                </td>
+                                <td>{{ str_replace('_', ' ', $ktrk->jenis_kontrak) }}</td>
+                                <td>
+                                    @php $dK = \Carbon\Carbon::now()->diffInDays($ktrk->tanggal_selesai, false); @endphp
+                                    @if($dK < 0) <span class="badge bg-danger">Telah Berakhir</span> 
+                                    @elseif($dK <= 30) <span class="badge bg-warning text-dark">Sisa {{ intval($dK) }} hr</span>
+                                    @else <span class="badge bg-success">Aman</span> @endif
                                 </td>
                             </tr>
                             @endforeach

@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class PenyusutanAset extends Model
 {
     protected $guarded = [];
-    //
+    public function aset()
+    {
+        return $this->belongsTo(Aset::class);
+    }
 }
