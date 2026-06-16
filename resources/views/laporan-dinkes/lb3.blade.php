@@ -20,7 +20,7 @@
         <div class="text-center mb-4">
             <h4 class="fw-bold mb-1">LAPORAN LB3 - GIZI, KIA, KB, DAN IMUNISASI</h4>
             <p class="mb-0">Puskesmas Percontohan</p>
-            <p class="mb-0">Bulan: {{ \Carbon\Carbon::create()->month($bulan)->translatedFormat('F') }} Tahun: {{ $tahun }}</p>
+            <p class="mb-0">Bulan: {{ \Carbon\Carbon::create()->month((int) $bulan)->translatedFormat('F') }} Tahun: {{ $tahun }}</p>
         </div>
 
         <div class="table-responsive">
