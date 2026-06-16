@@ -18,12 +18,14 @@ class BillingPasienController extends Controller
     {
         $pasiens = \App\Models\Pasien::all();
         $obats = \App\Models\ObatAlkes::all();
+        $tarifs = \App\Models\TarifLayanan::all();
+        
         // Nomor invoice otomatis
         $lastBilling = BillingPasien::latest()->first();
         $nextId = $lastBilling ? $lastBilling->id + 1 : 1;
         $no_invoice = 'INV/' . date('Y/m/') . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
-        return view('billing.create', compact('pasiens', 'obats', 'no_invoice'));
+        return view('billing.create', compact('pasiens', 'obats', 'tarifs', 'no_invoice'));
     }
 
     public function store(Request $request)

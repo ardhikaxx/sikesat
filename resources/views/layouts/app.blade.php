@@ -264,8 +264,11 @@
             <a href="{{ route('obat.index') }}" class="nav-item-link {{ request()->routeIs('obat*', 'distribusi*') ? 'active' : '' }}">
                 <i class="fas fa-pills"></i> Obat & Alkes
             </a>
-            <a href="{{ route('akun-akuntansi.index') }}" class="nav-item-link {{ request()->routeIs('akun-akuntansi.*') ? 'active' : '' }}">
-                <i class="fas fa-file-invoice"></i> Chart of Account
+            <a href="{{ route('tarif-layanan.index') }}" class="nav-item-link {{ request()->routeIs('tarif-layanan.*') ? 'active' : '' }}">
+                <i class="fas fa-tags"></i> Tarif Layanan
+            </a>
+            <a href="{{ route('supplier.index') }}" class="nav-item-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
+                <i class="fas fa-truck-loading"></i> Supplier & Vendor
             </a>
             <a href="{{ route('pegawai.index') }}" class="nav-item-link {{ request()->routeIs('pegawai.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Pegawai

@@ -81,6 +81,14 @@
         <option value="{{ $o->id }}" data-harga="{{ $o->harga_jual }}">{{ $o->nama_obat }} (Rp {{ number_format($o->harga_jual, 0, ',', '.') }})</option>
     @endforeach
 </select>
+
+<!-- Template Tarif untuk JS -->
+<select id="tarifOptions" style="display:none;">
+    <option value="">-- Pilih Layanan/Tindakan --</option>
+    @foreach($tarifs as $t)
+        <option value="{{ $t->id }}" data-harga="{{ $t->tarif }}">{{ $t->nama_layanan }} (Rp {{ number_format($t->tarif, 0, ',', '.') }})</option>
+    @endforeach
+</select>
 @endsection
 
 @push('scripts')
@@ -101,11 +109,16 @@
                 </select>
             </td>
             <td>
-                <div class="input-text-wrapper">
-                    <input type="text" name="items[${itemIndex}][nama_item]" class="form-control" required placeholder="Nama Tindakan/Kamar">
+                <div class="input-text-wrapper" style="display:none;">
+                    <input type="text" name="items[${itemIndex}][nama_item]" class="form-control" placeholder="Nama Tindakan/Kamar">
+                </div>
+                <div class="input-tarif-wrapper">
+                    <select class="form-select tarif-select" required onchange="setHargaTarif(this, ${itemIndex})">
+                        ${document.getElementById('tarifOptions').innerHTML}
+                    </select>
                 </div>
                 <div class="input-obat-wrapper" style="display:none;">
-                    <select name="items[${itemIndex}][obat_id]" class="form-select obat-select" onchange="setHargaObat(this)">
+                    <select name="items[${itemIndex}][obat_id]" class="form-select obat-select" onchange="setHargaObat(this, ${itemIndex})">
                         ${document.getElementById('obatOptions').innerHTML}
                     </select>
                 </div>
@@ -130,26 +143,66 @@
     function changeJenis(select) {
         const tr = select.closest('tr');
         const textWrapper = tr.querySelector('.input-text-wrapper');
+        const tarifWrapper = tr.querySelector('.input-tarif-wrapper');
         const obatWrapper = tr.querySelector('.input-obat-wrapper');
-        const nameInput = textWrapper.querySelector('input');
+        
+        const textInput = textWrapper.querySelector('input');
+        const tarifSelect = tarifWrapper.querySelector('select');
         const obatSelect = obatWrapper.querySelector('select');
+        
         const priceInput = tr.querySelector('.price-input');
 
         if (select.value === 'Obat') {
             textWrapper.style.display = 'none';
+            tarifWrapper.style.display = 'none';
             obatWrapper.style.display = 'block';
-            nameInput.removeAttribute('required');
+            
+            textInput.removeAttribute('required');
+            tarifSelect.removeAttribute('required');
             obatSelect.setAttribute('required', 'required');
-        } else {
+            priceInput.readOnly = true;
+        } else if (select.value === 'Lainnya') {
             textWrapper.style.display = 'block';
+            tarifWrapper.style.display = 'none';
             obatWrapper.style.display = 'none';
-            nameInput.setAttribute('required', 'required');
+            
+            textInput.setAttribute('required', 'required');
+            tarifSelect.removeAttribute('required');
             obatSelect.removeAttribute('required');
             priceInput.readOnly = false;
+        } else {
+            // Tindakan atau Kamar
+            textWrapper.style.display = 'none';
+            tarifWrapper.style.display = 'block';
+            obatWrapper.style.display = 'none';
+            
+            textInput.removeAttribute('required');
+            tarifSelect.setAttribute('required', 'required');
+            obatSelect.removeAttribute('required');
+            priceInput.readOnly = true;
         }
+        
+        // Reset values
+        priceInput.value = 0;
+        calcSub(priceInput);
     }
 
-    function setHargaObat(select) {
+    function setHargaTarif(select, index) {
+        const tr = select.closest('tr');
+        const priceInput = tr.querySelector('.price-input');
+        const option = select.options[select.selectedIndex];
+        
+        if (option.value) {
+            priceInput.value = option.getAttribute('data-harga');
+            const textInput = tr.querySelector('.input-text-wrapper input');
+            textInput.value = option.text.split(' (Rp')[0];
+        } else {
+            priceInput.value = 0;
+        }
+        calcSub(priceInput);
+    }
+
+    function setHargaObat(select, index) {
         const tr = select.closest('tr');
         const priceInput = tr.querySelector('.price-input');
         const option = select.options[select.selectedIndex];

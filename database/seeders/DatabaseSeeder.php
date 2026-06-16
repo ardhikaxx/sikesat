@@ -457,6 +457,97 @@ class DatabaseSeeder extends Seeder
             DB::table('kontrak_pihak_ketigas')->insert(array_merge($k, ['created_at' => Carbon::now()]));
         }
 
+        // ==========================================
+        // 16. Tarif Layanan Master Data
+        // ==========================================
+        $tarifs = [
+            ['kategori' => 'Tindakan', 'nama_layanan' => 'Pemeriksaan Dokter Umum', 'tarif' => 50000],
+            ['kategori' => 'Tindakan', 'nama_layanan' => 'Pemeriksaan Dokter Spesialis', 'tarif' => 150000],
+            ['kategori' => 'Tindakan', 'nama_layanan' => 'EKG (Rekam Jantung)', 'tarif' => 75000],
+            ['kategori' => 'Tindakan', 'nama_layanan' => 'USG Kandungan', 'tarif' => 125000],
+            ['kategori' => 'Tindakan', 'nama_layanan' => 'Perawatan Luka Sedang', 'tarif' => 60000],
+            ['kategori' => 'Kamar', 'nama_layanan' => 'Kamar Rawat Inap Kelas 1 (Per Malam)', 'tarif' => 350000],
+            ['kategori' => 'Kamar', 'nama_layanan' => 'Kamar Rawat Inap Kelas 2 (Per Malam)', 'tarif' => 250000],
+            ['kategori' => 'Kamar', 'nama_layanan' => 'Kamar Rawat Inap Kelas 3 (Per Malam)', 'tarif' => 150000],
+            ['kategori' => 'Lainnya', 'nama_layanan' => 'Biaya Administrasi Pendaftaran', 'tarif' => 15000],
+        ];
+
+        $tarifIds = [];
+        foreach ($tarifs as $t) {
+            $tarifIds[] = DB::table('tarif_layanans')->insertGetId(array_merge($t, ['created_at' => Carbon::now()]));
+        }
+
+        // ==========================================
+        // 17. Billing Pasien
+        // ==========================================
+        $pasienIds = DB::table('pasiens')->pluck('id')->toArray();
+        $obatIds = DB::table('obat_alkes')->pluck('id')->toArray();
+        
+        if (count($pasienIds) > 0) {
+            for ($i = 1; $i <= 30; $i++) {
+                $isPaid = rand(1, 10) > 3; // 70% paid
+                $totalBilling = 0;
+                
+                $billingId = DB::table('billing_pasiens')->insertGetId([
+                    'no_invoice' => 'INV/2026/06/' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'pasien_id' => $pasienIds[array_rand($pasienIds)],
+                    'tanggal' => Carbon::now()->subDays(rand(1, 30))->format('Y-m-d'),
+                    'status' => $isPaid ? 'Lunas' : 'Belum Bayar',
+                    'metode_pembayaran' => $isPaid ? (rand(1, 10) > 7 ? 'QRIS' : 'Tunai') : null,
+                    'keterangan' => 'Tagihan dummy ' . $i,
+                    'created_at' => Carbon::now()
+                ]);
+
+                // 1 Administrasi
+                DB::table('billing_items')->insert([
+                    'billing_id' => $billingId,
+                    'jenis_item' => 'Lainnya',
+                    'nama_item' => 'Biaya Administrasi Pendaftaran',
+                    'jumlah' => 1,
+                    'harga_satuan' => 15000,
+                    'subtotal' => 15000,
+                    'created_at' => Carbon::now()
+                ]);
+                $totalBilling += 15000;
+
+                // 1 Tindakan
+                $tindakan = $tarifs[rand(0, 4)];
+                DB::table('billing_items')->insert([
+                    'billing_id' => $billingId,
+                    'jenis_item' => 'Tindakan',
+                    'nama_item' => $tindakan['nama_layanan'],
+                    'jumlah' => 1,
+                    'harga_satuan' => $tindakan['tarif'],
+                    'subtotal' => $tindakan['tarif'],
+                    'created_at' => Carbon::now()
+                ]);
+                $totalBilling += $tindakan['tarif'];
+
+                // 2 Obat
+                if (count($obatIds) > 0) {
+                    for ($o = 0; $o < 2; $o++) {
+                        $hargaObat = rand(5, 50) * 1000;
+                        $jumlah = rand(1, 3);
+                        $sub = $hargaObat * $jumlah;
+                        
+                        DB::table('billing_items')->insert([
+                            'billing_id' => $billingId,
+                            'jenis_item' => 'Obat',
+                            'nama_item' => 'Obat Dummy ' . rand(1, 100),
+                            'obat_id' => $obatIds[array_rand($obatIds)],
+                            'jumlah' => $jumlah,
+                            'harga_satuan' => $hargaObat,
+                            'subtotal' => $sub,
+                            'created_at' => Carbon::now()
+                        ]);
+                        $totalBilling += $sub;
+                    }
+                }
+
+                DB::table('billing_pasiens')->where('id', $billingId)->update(['total_tagihan' => $totalBilling]);
+            }
+        }
+
         $this->command->info('Database Seeded Successfully with Massive Realistic Dummy Data!');
     }
 }
