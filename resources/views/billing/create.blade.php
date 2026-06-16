@@ -147,9 +147,11 @@
         `;
         tbody.appendChild(tr);
         
-        // Panggil changeJenis untuk inisialisasi dropdown secara sempurna (termasuk memuat opsi dan select2)
-        const jenisSelect = tr.querySelector('.jenis-select');
-        changeJenis(jenisSelect);
+        // Gunakan timeout kecil agar browser merender elemen ke DOM sebelum Select2 membaca opsi dan ukuran
+        setTimeout(() => {
+            const jenisSelect = tr.querySelector('.jenis-select');
+            changeJenis(jenisSelect);
+        }, 50);
         
         itemIndex++;
     }
@@ -189,11 +191,12 @@
             // Hapus paksa container Select2 lama yang tertinggal di DOM (mencegah duplikasi)
             $(itemSelect).siblings('.select2-container').remove();
             
-            // Ganti opsi berdasarkan jenis
+            // Ganti opsi berdasarkan jenis menggunakan clone node asli (bukan HTML string)
+            $(itemSelect).empty();
             if (jenis === 'Obat') {
-                $(itemSelect).html($('#obatOptions').html());
+                $(itemSelect).append($('#obatOptions').children().clone());
             } else {
-                $(itemSelect).html($('#tarifOptions').html());
+                $(itemSelect).append($('#tarifOptions').children().clone());
             }
             
             // Re-init Select2
