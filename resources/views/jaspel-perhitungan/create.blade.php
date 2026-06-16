@@ -21,7 +21,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Sumber Dana</label>
-                <input type="text" name="sumber_dana" class="form-control" required>
+                <select name="sumber_dana" class="form-control" required>
+                    <option value="BPJS">BPJS</option>
+                    <option value="Umum">Umum</option>
+                    <option value="BOK">BOK</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Total Dana</label>
@@ -29,7 +33,12 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Status</label>
-                <input type="text" name="status" class="form-control" required>
+                <select name="status" class="form-control" required>
+                    <option value="draft">Draft</option>
+                    <option value="verifikasi_ppk">Verifikasi PPK</option>
+                    <option value="approved_kepala">Approved Kepala</option>
+                    <option value="dicairkan">Dicairkan</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
         </form>

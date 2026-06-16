@@ -23,7 +23,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Sumber Dana</label>
-                <input type="text" name="sumber_dana" class="form-control" value="{{ $data->sumber_dana }}" required>
+                <select name="sumber_dana" class="form-control" required>
+                    <option value="BPJS" {{ $data->sumber_dana == 'BPJS' ? 'selected' : '' }}>BPJS</option>
+                    <option value="Umum" {{ $data->sumber_dana == 'Umum' ? 'selected' : '' }}>Umum</option>
+                    <option value="BOK" {{ $data->sumber_dana == 'BOK' ? 'selected' : '' }}>BOK</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Total Dana</label>
@@ -31,7 +35,12 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Status</label>
-                <input type="text" name="status" class="form-control" value="{{ $data->status }}" required>
+                <select name="status" class="form-control" required>
+                    <option value="draft" {{ $data->status == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="verifikasi_ppk" {{ $data->status == 'verifikasi_ppk' ? 'selected' : '' }}>Verifikasi PPK</option>
+                    <option value="approved_kepala" {{ $data->status == 'approved_kepala' ? 'selected' : '' }}>Approved Kepala</option>
+                    <option value="dicairkan" {{ $data->status == 'dicairkan' ? 'selected' : '' }}>Dicairkan</option>
+                </select>
             </div>
             <hr>
             <div class="text-end mt-3">

@@ -99,7 +99,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('unit-pelayanan', App\Http\Controllers\UnitPelayananController::class)->only(['index', 'show']);
 
     // Restricted CRUD Operations
-    Route::middleware(['role:super_admin'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
         Route::resource('akun-akuntansi', App\Http\Controllers\AkunAkuntansiController::class)->except(['index', 'show']);
         Route::resource('aset', App\Http\Controllers\AsetController::class)->except(['index', 'show']);
         Route::resource('aset-kategori', App\Http\Controllers\AsetKategoriController::class)->except(['index', 'show']);
