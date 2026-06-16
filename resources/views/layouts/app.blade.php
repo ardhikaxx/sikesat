@@ -309,7 +309,7 @@
                     {{ auth()->user()->name }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-user fa-fw text-muted me-2"></i> Profil</a></li>
+                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fas fa-user fa-fw text-muted me-2"></i> Profil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form action="{{ route('logout') }}" method="POST" id="form-logout">
