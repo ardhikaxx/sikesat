@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('sumber-dana', SumberDanaController::class)->except(['index', 'show']);
         Route::resource('supplier', SupplierController::class)->except(['index', 'show']);
         Route::resource('pasien', PasienController::class)->except(['index', 'show']);
+        Route::get('/konfigurasi', [App\Http\Controllers\KonfigurasiSistemController::class, 'index'])->name('konfigurasi.index');
     });
 
     Route::get('/penerimaan', [App\Http\Controllers\PenerimaanKasController::class, 'index'])->name('penerimaan.index');
@@ -104,4 +105,8 @@ Route::middleware(['auth'])->group(function () {
     // Billing / Kasir Pasien
     Route::post('billing/{id}/pay', [App\Http\Controllers\BillingPasienController::class, 'pay'])->name('billing.pay');
     Route::resource('billing', App\Http\Controllers\BillingPasienController::class);
+
+    // Laporan Dinkes (LB1-LB4)
+    Route::get('/laporan-dinkes', [App\Http\Controllers\LaporanDinkesController::class, 'index'])->name('laporan.dinkes.index');
+    Route::post('/laporan-dinkes/generate', [App\Http\Controllers\LaporanDinkesController::class, 'generate'])->name('laporan.dinkes.generate');
 });

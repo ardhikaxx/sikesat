@@ -249,6 +249,9 @@
             <a href="{{ route('laporan-keuangan.index') }}" class="nav-item-link {{ request()->routeIs('laporan-keuangan.*') ? 'active' : '' }}">
                 <i class="fas fa-file-invoice"></i> Laporan Keuangan
             </a>
+            <a href="{{ route('laporan.dinkes.index') }}" class="nav-item-link {{ request()->routeIs('laporan.dinkes.*') ? 'active' : '' }}">
+                <i class="fas fa-chart-line"></i> Laporan Dinkes (LB)
+            </a>
 
             <div class="sidebar-section-title">PELAYANAN PASIEN</div>
             <a href="{{ route('pasien.index') }}" class="nav-item-link {{ request()->routeIs('pasien.*') ? 'active' : '' }}">
