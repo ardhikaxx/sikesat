@@ -65,13 +65,14 @@
         <p class="text-muted mb-0">Selamat datang kembali, {{ auth()->user()->name }}. Ringkasan data keuangan hari ini.</p>
     </div>
     <div>
-        <div class="input-group">
+        <form method="GET" action="{{ route('dashboard') }}" class="input-group">
             <span class="input-group-text bg-white"><i class="fas fa-calendar"></i></span>
-            <select class="form-select border-start-0" style="width: 150px;">
-                <option>Tahun 2025</option>
-                <option>Tahun 2024</option>
+            <select name="year" class="form-select border-start-0" style="width: 150px;" onchange="this.form.submit()">
+                <option value="2026" {{ $year == '2026' ? 'selected' : '' }}>Tahun 2026</option>
+                <option value="2025" {{ $year == '2025' ? 'selected' : '' }}>Tahun 2025</option>
+                <option value="2024" {{ $year == '2024' ? 'selected' : '' }}>Tahun 2024</option>
             </select>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -83,9 +84,9 @@
             </div>
             <div class="kpi-card__body w-100">
                 <span class="kpi-card__label">Total Pendapatan</span>
-                <span class="kpi-card__value">Rp 1.250 Jt</span>
+                <span class="kpi-card__value">Rp {{ number_format($totalPendapatan / 1000000, 1, ',', '.') }} Jt</span>
                 <span class="kpi-card__sub text-success">
-                    <i class="fas fa-arrow-up"></i> 12.5% vs Q4
+                    <i class="fas fa-check-circle"></i> Terealisasi
                 </span>
             </div>
         </div>
@@ -97,11 +98,11 @@
             </div>
             <div class="kpi-card__body w-100">
                 <span class="kpi-card__label">Total Pengeluaran</span>
-                <span class="kpi-card__value">Rp 980 Jt</span>
+                <span class="kpi-card__value">Rp {{ number_format($totalPengeluaran / 1000000, 1, ',', '.') }} Jt</span>
                 <div class="progress mt-2" style="height: 4px;">
-                    <div class="progress-bar bg-warning" style="width: 78%"></div>
+                    <div class="progress-bar bg-warning" style="width: {{ $totalPendapatan > 0 ? min(($totalPengeluaran/$totalPendapatan)*100, 100) : 0 }}%"></div>
                 </div>
-                <small class="text-muted mt-1 d-block">78% dari pagu</small>
+                <small class="text-muted mt-1 d-block">{{ $totalPendapatan > 0 ? round(($totalPengeluaran/$totalPendapatan)*100, 1) : 0 }}% thd Pendapatan</small>
             </div>
         </div>
     </div>
@@ -111,9 +112,9 @@
                 <i class="fas fa-wallet"></i>
             </div>
             <div class="kpi-card__body w-100">
-                <span class="kpi-card__label">Sisa Kas Tersedia</span>
-                <span class="kpi-card__value">Rp 270 Jt</span>
-                <span class="kpi-card__sub text-success">Status Aman</span>
+                <span class="kpi-card__label">Sisa Kas BLUD</span>
+                <span class="kpi-card__value">Rp {{ number_format($sisaKas / 1000000, 1, ',', '.') }} Jt</span>
+                <span class="kpi-card__sub text-success">Surplus / Defisit</span>
             </div>
         </div>
     </div>
@@ -124,11 +125,27 @@
             </div>
             <div class="kpi-card__body w-100">
                 <span class="kpi-card__label">Kunjungan Pasien</span>
-                <span class="kpi-card__value">1,240</span>
-                <span class="kpi-card__sub text-primary">Bulan Ini</span>
+                <span class="kpi-card__value">{{ number_format($totalKunjungan) }}</span>
+                <span class="kpi-card__sub text-primary">Tahun {{ $year }}</span>
             </div>
         </div>
     </div>
+</div>
+
+<div class="row g-4 mb-4">
+    @if(count($stokMenipis) > 0)
+    <div class="col-12">
+        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-0" role="alert">
+            <i class="fas fa-exclamation-triangle fa-2x me-3 text-warning"></i>
+            <div>
+                <h6 class="fw-bold mb-1">Peringatan: Stok Obat/Alkes Menipis!</h6>
+                <p class="mb-0 text-dark" style="font-size: 0.875rem;">Ada {{ count($stokMenipis) }} item yang mencapai batas stok minimum. Segera lakukan pengadaan untuk: 
+                    <strong>{{ implode(', ', $stokMenipis->pluck('nama_generik')->toArray()) }}</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 <div class="row g-4">
@@ -158,21 +175,24 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const trendPendapatan = {!! json_encode(array_values($trendPendapatan)) !!};
+    const trendPengeluaran = {!! json_encode(array_values($trendPengeluaran)) !!};
+
     const ctx1 = document.getElementById('trendChart').getContext('2d');
     new Chart(ctx1, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
             datasets: [{
                 label: 'Pendapatan',
-                data: [120, 190, 150, 220, 180, 250],
+                data: trendPendapatan,
                 borderColor: '#0D6E6E',
                 backgroundColor: 'rgba(13, 110, 110, 0.1)',
                 fill: true,
                 tension: 0.4
             }, {
                 label: 'Pengeluaran',
-                data: [90, 140, 130, 180, 160, 200],
+                data: trendPengeluaran,
                 borderColor: '#D4860B',
                 backgroundColor: 'transparent',
                 tension: 0.4
@@ -180,24 +200,63 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             responsive: true,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { beginAtZero: true } }
+            plugins: { 
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) { label += ': '; }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: { 
+                y: { 
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) { return 'Rp ' + (value / 1000000) + ' Jt'; }
+                    }
+                } 
+            }
         }
     });
+
+    const pieLabels = {!! json_encode($pieLabels) !!};
+    const pieData = {!! json_encode($pieData) !!};
+    const bgColors = ['#0D6E6E', '#19A7A7', '#D4860B', '#1565C0', '#1A7F5A', '#DC2626', '#8B5CF6'];
 
     const ctx2 = document.getElementById('pieChart').getContext('2d');
     new Chart(ctx2, {
         type: 'doughnut',
         data: {
-            labels: ['Pegawai', 'Barang Jasa', 'Obat/Alkes'],
+            labels: pieLabels,
             datasets: [{
-                data: [45, 25, 30],
-                backgroundColor: ['#0D6E6E', '#19A7A7', '#D4860B']
+                data: pieData,
+                backgroundColor: bgColors.slice(0, pieLabels.length)
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { position: 'bottom' } }
+            plugins: { 
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) { label += ': '; }
+                            if (context.parsed !== null) {
+                                label += new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(context.parsed);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
         }
     });
 });

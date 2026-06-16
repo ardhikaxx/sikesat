@@ -245,6 +245,9 @@
             <a href="{{ route('spm-indikator.index') }}" class="nav-item-link {{ request()->routeIs('spm-*') ? 'active' : '' }}">
                 <i class="fas fa-chart-line"></i> Kinerja BLUD (SPM)
             </a>
+            <a href="{{ route('laporan-keuangan.index') }}" class="nav-item-link {{ request()->routeIs('laporan-keuangan.*') ? 'active' : '' }}">
+                <i class="fas fa-file-invoice"></i> Laporan Keuangan
+            </a>
 
             <div class="sidebar-section-title">Master Data</div>
             <a href="{{ route('obat.index') }}" class="nav-item-link {{ request()->routeIs('obat.*') ? 'active' : '' }}">

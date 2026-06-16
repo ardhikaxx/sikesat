@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\UnitPelayananController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\AkunAkuntansiController;
@@ -15,9 +17,11 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Laporan Keuangan BLUD
+    Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan-keuangan.index');
+    Route::get('/laporan-keuangan/generate', [LaporanKeuanganController::class, 'generate'])->name('laporan-keuangan.generate');
 
     // Master Data - Read All (Auth)
     Route::resource('unit-pelayanan', UnitPelayananController::class)->only(['index', 'show']);
