@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AsetKategori extends Model
 {
+    protected $guarded = [];
     //
 }
