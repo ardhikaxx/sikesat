@@ -71,8 +71,8 @@ class DashboardController extends Controller
         // 7. Alert Stok Obat Menipis
         $stokMenipis = DB::table('stok_gudangs')
             ->join('obat_alkes', 'stok_gudangs.obat_alkes_id', '=', 'obat_alkes.id')
-            ->whereRaw('stok_gudangs.jumlah_stok <= obat_alkes.stok_minimum')
-            ->select('obat_alkes.nama_generik', 'stok_gudangs.jumlah_stok', 'obat_alkes.stok_minimum')
+            ->whereRaw('stok_gudangs.stok_tersedia <= obat_alkes.stok_minimum')
+            ->select('obat_alkes.nama_generik', 'stok_gudangs.stok_tersedia as jumlah_stok', 'obat_alkes.stok_minimum')
             ->limit(5)
             ->get();
 
