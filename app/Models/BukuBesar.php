@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class BukuBesar extends Model
 {
+    protected $guarded = [];
     //
 }
