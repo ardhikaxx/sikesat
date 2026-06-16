@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
         $roles = [
             'super_admin', 'kepala_puskesmas', 'ppk_blud', 'bendahara_penerimaan',
             'bendahara_pengeluaran', 'staf_akuntansi', 'petugas_gudang',
-            'unit_pengadaan', 'auditor_internal', 'petugas_pelayanan'
+            'unit_pengadaan', 'auditor_internal', 'petugas_pelayanan',
+            'dokter_umum', 'dokter_spesialis', 'perawat', 'bidan'
         ];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
@@ -34,9 +35,16 @@ class DatabaseSeeder extends Seeder
             ['kode' => 'U05', 'nama' => 'Tata Usaha / Administrasi', 'jenis' => 'administrasi', 'kepala_unit' => 'Drs. Herman Mulyadi'],
             ['kode' => 'U06', 'nama' => 'Poli Gigi', 'jenis' => 'rawat_jalan', 'kepala_unit' => 'drg. Sarah Melati'],
             ['kode' => 'U07', 'nama' => 'Poli KIA & KB', 'jenis' => 'rawat_jalan', 'kepala_unit' => 'Bidan Rahmawati, SST'],
+            ['kode' => 'U08', 'nama' => 'Poli Anak', 'jenis' => 'rawat_jalan', 'kepala_unit' => 'dr. Citra Ananda, Sp.A'],
+            ['kode' => 'U09', 'nama' => 'Poli Penyakit Dalam', 'jenis' => 'rawat_jalan', 'kepala_unit' => 'dr. Surya Dharma, Sp.PD'],
+            ['kode' => 'U10', 'nama' => 'Ruang Rawat Inap Melati', 'jenis' => 'rawat_inap', 'kepala_unit' => 'Ns. Ratna Sari, S.Kep'],
+            ['kode' => 'U11', 'nama' => 'Ruang Bersalin / PONED', 'jenis' => 'rawat_inap', 'kepala_unit' => 'Bidan Ningsih, Amd.Keb'],
+            ['kode' => 'U12', 'nama' => 'Radiologi', 'jenis' => 'penunjang', 'kepala_unit' => 'Hendri Kusuma, Amd.Rad'],
         ];
+        $unitIds = [];
         foreach ($units as $u) {
             $id = DB::table('unit_pelayanans')->insertGetId(array_merge($u, ['created_at' => $now, 'updated_at' => $now]));
+            $unitIds[] = $id;
             if ($u['nama'] === 'Tata Usaha / Administrasi') $tuId = $id;
             if ($u['nama'] === 'Gudang Farmasi') $gudangId = $id;
             if ($u['nama'] === 'Poli Umum') $poliUmumId = $id;
@@ -76,35 +84,59 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Tambah Pegawai Dummy
-        for ($i=1; $i<=15; $i++) {
+        // Tambah Pegawai Dummy Lebih Variatif
+        $firstNamesL = ['Budi', 'Agus', 'Andi', 'Rudi', 'Hendra', 'Eko', 'Dedi', 'Bambang', 'Ahmad', 'Reza', 'Surya', 'Teguh', 'Arif', 'Herman', 'Iwan'];
+        $firstNamesP = ['Siti', 'Ayu', 'Rini', 'Dewi', 'Sri', 'Nina', 'Lestari', 'Fitri', 'Nurul', 'Anita', 'Maya', 'Rika', 'Dina', 'Putri', 'Sari'];
+        $lastNames = ['Setiawan', 'Pratama', 'Saputra', 'Wijaya', 'Kurniawan', 'Hidayat', 'Santoso', 'Gunawan', 'Nugroho', 'Wibowo', 'Wahyudi', 'Lubis', 'Siregar', 'Harahap', 'Kusuma'];
+        $jabatans = ['Dokter Umum', 'Perawat Pelaksana', 'Bidan Pelaksana', 'Analis Kesehatan', 'Asisten Apoteker', 'Staf Administrasi', 'Petugas Rekam Medis', 'Petugas Kebersihan', 'Supir Ambulans', 'Petugas Keamanan'];
+
+        for ($i=1; $i<=80; $i++) {
+            $jk = rand(0, 1) ? 'L' : 'P';
+            $fName = $jk == 'L' ? $firstNamesL[array_rand($firstNamesL)] : $firstNamesP[array_rand($firstNamesP)];
+            $lName = $lastNames[array_rand($lastNames)];
+            $jabatan = $jabatans[array_rand($jabatans)];
+            
             DB::table('pegawais')->insert([
-                'nip' => '199001012020011' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'nama' => 'Pegawai Kesehatan Dummy ' . $i,
-                'jenis_kelamin' => $i % 2 == 0 ? 'L' : 'P',
-                'jabatan' => 'Perawat Pelaksana',
-                'jenis_pegawai' => $i % 3 == 0 ? 'PPPK' : 'PNS',
-                'unit_id' => $poliUmumId ?? 1,
+                'nip' => '19' . rand(70,99) . str_pad(rand(1,12), 2, '0', STR_PAD_LEFT) . str_pad(rand(1,28), 2, '0', STR_PAD_LEFT) . '20' . rand(10,24) . str_pad(rand(1,12), 2, '0', STR_PAD_LEFT) . rand(1,2) . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'nama' => $fName . ' ' . $lName,
+                'jenis_kelamin' => $jk,
+                'jabatan' => $jabatan,
+                'jenis_pegawai' => rand(1, 100) > 60 ? 'PPPK' : (rand(1, 100) > 50 ? 'PNS' : 'Honorer'),
+                'unit_id' => $unitIds[array_rand($unitIds)],
                 'created_at' => $now,
             ]);
         }
 
-        // 4. CHART OF ACCOUNTS (COA)
+        // 4. CHART OF ACCOUNTS (COA) - Diperbanyak
         $coas = [
             ['kode_akun' => '1.1.1.01', 'nama_akun' => 'Kas di Bendahara Penerimaan', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
             ['kode_akun' => '1.1.1.02', 'nama_akun' => 'Kas di Bendahara Pengeluaran', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
             ['kode_akun' => '1.1.1.03', 'nama_akun' => 'Rekening Kas BLUD', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '1.1.1.04', 'nama_akun' => 'Piutang Pelayanan Kesehatan', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '1.1.1.05', 'nama_akun' => 'Piutang Klaim BPJS', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
             ['kode_akun' => '1.1.7.01', 'nama_akun' => 'Persediaan Obat-obatan', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '1.1.7.02', 'nama_akun' => 'Persediaan Bahan Medis Habis Pakai (BMHP)', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '1.1.7.03', 'nama_akun' => 'Persediaan Alat Tulis Kantor (ATK)', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_lancar', 'level' => 4, 'saldo_normal' => 'debit'],
             ['kode_akun' => '1.3.2.01', 'nama_akun' => 'Peralatan Medis', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_tetap', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '1.3.2.02', 'nama_akun' => 'Peralatan Komputer & IT', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_tetap', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '1.3.2.03', 'nama_akun' => 'Kendaraan Ambulans', 'jenis_akun' => 'aset', 'kelompok_akun' => 'aset_tetap', 'level' => 4, 'saldo_normal' => 'debit'],
+            
+            ['kode_akun' => '2.1.1.01', 'nama_akun' => 'Utang Belanja Barang', 'jenis_akun' => 'kewajiban', 'kelompok_akun' => 'kewajiban_jangka_pendek', 'level' => 4, 'saldo_normal' => 'kredit'],
+            ['kode_akun' => '2.1.1.02', 'nama_akun' => 'Utang Jasa Pelayanan', 'jenis_akun' => 'kewajiban', 'kelompok_akun' => 'kewajiban_jangka_pendek', 'level' => 4, 'saldo_normal' => 'kredit'],
+            
+            ['kode_akun' => '3.1.1.01', 'nama_akun' => 'Ekuitas BLUD', 'jenis_akun' => 'ekuitas', 'kelompok_akun' => 'ekuitas', 'level' => 4, 'saldo_normal' => 'kredit'],
             
             ['kode_akun' => '4.1.4.01', 'nama_akun' => 'Pendapatan Layanan Pasien Umum', 'jenis_akun' => 'pendapatan', 'kelompok_akun' => 'pendapatan_lra', 'level' => 4, 'saldo_normal' => 'kredit'],
             ['kode_akun' => '4.1.4.02', 'nama_akun' => 'Pendapatan Kapitasi JKN', 'jenis_akun' => 'pendapatan', 'kelompok_akun' => 'pendapatan_lra', 'level' => 4, 'saldo_normal' => 'kredit'],
             ['kode_akun' => '4.1.4.03', 'nama_akun' => 'Pendapatan Non Kapitasi JKN', 'jenis_akun' => 'pendapatan', 'kelompok_akun' => 'pendapatan_lra', 'level' => 4, 'saldo_normal' => 'kredit'],
+            ['kode_akun' => '4.1.4.04', 'nama_akun' => 'Pendapatan APBD/BOK', 'jenis_akun' => 'pendapatan', 'kelompok_akun' => 'pendapatan_lra', 'level' => 4, 'saldo_normal' => 'kredit'],
             
             ['kode_akun' => '5.1.1.01', 'nama_akun' => 'Beban Gaji dan Tunjangan PNS', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
             ['kode_akun' => '5.1.1.02', 'nama_akun' => 'Beban Jasa Pelayanan JKN', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
             ['kode_akun' => '5.1.2.01', 'nama_akun' => 'Beban Persediaan Obat', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
-            ['kode_akun' => '5.1.2.02', 'nama_akun' => 'Beban Pemeliharaan Alat Medis', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '5.1.2.02', 'nama_akun' => 'Beban Persediaan BMHP', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '5.1.2.03', 'nama_akun' => 'Beban Pemeliharaan Alat Medis', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
+            ['kode_akun' => '5.1.2.04', 'nama_akun' => 'Beban Listrik, Air, dan Telepon', 'jenis_akun' => 'beban', 'kelompok_akun' => 'beban', 'level' => 4, 'saldo_normal' => 'debit'],
         ];
         foreach ($coas as $coa) {
             DB::table('akun_akuntansis')->insert(array_merge($coa, ['created_at' => $now, 'updated_at' => $now]));
@@ -114,66 +146,96 @@ class DatabaseSeeder extends Seeder
         $taId = DB::table('tahun_anggarans')->insertGetId([
             'tahun' => 2026, 'status' => 'aktif', 'tanggal_mulai' => '2026-01-01', 'tanggal_selesai' => '2026-12-31', 'created_at' => $now
         ]);
-
-        $sd_pad = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-01', 'nama' => 'Pendapatan BLUD (Umum)', 'jenis' => 'PAD', 'tahun_anggaran' => 2026, 'total_pagu' => 2000000000, 'created_at' => $now]);
-        $sd_jkn = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-02', 'nama' => 'Dana Kapitasi JKN', 'jenis' => 'BPJS_Kapitasi', 'tahun_anggaran' => 2026, 'total_pagu' => 4500000000, 'created_at' => $now]);
-        $sd_bok = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-03', 'nama' => 'Bantuan Operasional Kesehatan (BOK)', 'jenis' => 'BOK', 'tahun_anggaran' => 2026, 'total_pagu' => 1200000000, 'created_at' => $now]);
-
-        // 6. RBA (Rencana Bisnis Anggaran)
-        $akun_pendapatan = DB::table('akun_akuntansis')->where('kode_akun', '4.1.4.01')->value('id');
-        $akun_belanja = DB::table('akun_akuntansis')->where('kode_akun', '5.1.2.01')->value('id');
-        
-        DB::table('rencana_bisnis_anggarans')->insert([
-            ['tahun_anggaran_id' => $taId, 'unit_id' => $tuId ?? 1, 'jenis' => 'pendapatan', 'akun_id' => $akun_pendapatan ?? 1, 'sumber_dana_id' => $sd_pad, 'total_target' => 2000000000, 'status' => 'disetujui', 'created_at' => $now],
-            ['tahun_anggaran_id' => $taId, 'unit_id' => $gudangId ?? 1, 'jenis' => 'belanja', 'akun_id' => $akun_belanja ?? 1, 'sumber_dana_id' => $sd_jkn, 'total_target' => 4500000000, 'status' => 'disetujui', 'created_at' => $now],
+        $taIdLalu = DB::table('tahun_anggarans')->insertGetId([
+            'tahun' => 2025, 'status' => 'tutup', 'tanggal_mulai' => '2025-01-01', 'tanggal_selesai' => '2025-12-31', 'created_at' => Carbon::now()->subYear()
         ]);
 
-        // 7. SUPPLIER
+        $sd_pad = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-01', 'nama' => 'Pendapatan BLUD (Umum)', 'jenis' => 'PAD', 'tahun_anggaran' => 2026, 'total_pagu' => 2500000000, 'created_at' => $now]);
+        $sd_jkn = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-02', 'nama' => 'Dana Kapitasi JKN', 'jenis' => 'BPJS_Kapitasi', 'tahun_anggaran' => 2026, 'total_pagu' => 5000000000, 'created_at' => $now]);
+        $sd_bok = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-03', 'nama' => 'Bantuan Operasional Kesehatan (BOK)', 'jenis' => 'BOK', 'tahun_anggaran' => 2026, 'total_pagu' => 1500000000, 'created_at' => $now]);
+        $sd_apbd = DB::table('sumber_danas')->insertGetId(['kode' => 'SD-04', 'nama' => 'APBD Murni', 'jenis' => 'APBD', 'tahun_anggaran' => 2026, 'total_pagu' => 800000000, 'created_at' => $now]);
+
+        // 6. RBA (Rencana Bisnis Anggaran) - Diperbanyak
+        $akun_pend_umum = DB::table('akun_akuntansis')->where('kode_akun', '4.1.4.01')->value('id');
+        $akun_pend_jkn = DB::table('akun_akuntansis')->where('kode_akun', '4.1.4.02')->value('id');
+        $akun_belanja_obat = DB::table('akun_akuntansis')->where('kode_akun', '5.1.2.01')->value('id');
+        $akun_belanja_gaji = DB::table('akun_akuntansis')->where('kode_akun', '5.1.1.02')->value('id');
+        $akun_belanja_alat = DB::table('akun_akuntansis')->where('kode_akun', '5.1.2.03')->value('id');
+        
+        DB::table('rencana_bisnis_anggarans')->insert([
+            ['tahun_anggaran_id' => $taId, 'unit_id' => $tuId ?? 1, 'jenis' => 'pendapatan', 'akun_id' => $akun_pend_umum ?? 1, 'sumber_dana_id' => $sd_pad, 'total_target' => 2500000000, 'status' => 'disetujui', 'created_at' => $now],
+            ['tahun_anggaran_id' => $taId, 'unit_id' => $tuId ?? 1, 'jenis' => 'pendapatan', 'akun_id' => $akun_pend_jkn ?? 1, 'sumber_dana_id' => $sd_jkn, 'total_target' => 5000000000, 'status' => 'disetujui', 'created_at' => $now],
+            ['tahun_anggaran_id' => $taId, 'unit_id' => $gudangId ?? 1, 'jenis' => 'belanja', 'akun_id' => $akun_belanja_obat ?? 1, 'sumber_dana_id' => $sd_jkn, 'total_target' => 2000000000, 'status' => 'disetujui', 'created_at' => $now],
+            ['tahun_anggaran_id' => $taId, 'unit_id' => $tuId ?? 1, 'jenis' => 'belanja', 'akun_id' => $akun_belanja_gaji ?? 1, 'sumber_dana_id' => $sd_jkn, 'total_target' => 2500000000, 'status' => 'disetujui', 'created_at' => $now],
+            ['tahun_anggaran_id' => $taId, 'unit_id' => $poliUmumId ?? 1, 'jenis' => 'belanja', 'akun_id' => $akun_belanja_alat ?? 1, 'sumber_dana_id' => $sd_pad, 'total_target' => 500000000, 'status' => 'draft', 'created_at' => $now],
+        ]);
+
+        // 7. SUPPLIER - Diperbanyak
         $suppliers = [
-            ['kode' => 'SUP-001', 'nama' => 'PT. Kimia Farma Trading', 'jenis' => 'Obat', 'no_telepon' => '021-123456'],
-            ['kode' => 'SUP-002', 'nama' => 'CV. Medika Alat Sejahtera', 'jenis' => 'Alkes', 'no_telepon' => '021-987654'],
-            ['kode' => 'SUP-003', 'nama' => 'Toko Mitra ATK', 'jenis' => 'ATK', 'no_telepon' => '08123456789'],
-            ['kode' => 'SUP-004', 'nama' => 'PT. Enseval Putera Megatrading', 'jenis' => 'Obat', 'no_telepon' => '021-444555'],
-            ['kode' => 'SUP-005', 'nama' => 'PT. Indofarma Global Medika', 'jenis' => 'Obat', 'no_telepon' => '021-777888'],
+            ['kode' => 'SUP-001', 'nama' => 'PT. Kimia Farma Trading', 'jenis' => 'Obat', 'no_telepon' => '021-123456', 'alamat' => 'Jl. Veteran No. 9, Jakarta'],
+            ['kode' => 'SUP-002', 'nama' => 'CV. Medika Alat Sejahtera', 'jenis' => 'Alkes', 'no_telepon' => '021-987654', 'alamat' => 'Jl. Sudirman No. 12, Bandung'],
+            ['kode' => 'SUP-003', 'nama' => 'Toko Mitra ATK', 'jenis' => 'ATK', 'no_telepon' => '08123456789', 'alamat' => 'Pasar Induk Blok B, Surabaya'],
+            ['kode' => 'SUP-004', 'nama' => 'PT. Enseval Putera Megatrading', 'jenis' => 'Obat', 'no_telepon' => '021-444555', 'alamat' => 'Kawasan Industri Pulo Gadung'],
+            ['kode' => 'SUP-005', 'nama' => 'PT. Indofarma Global Medika', 'jenis' => 'Obat', 'no_telepon' => '021-777888', 'alamat' => 'Jl. Gatot Subroto No 5'],
+            ['kode' => 'SUP-006', 'nama' => 'PT. Anugerah Pharmindo Lestari', 'jenis' => 'Obat', 'no_telepon' => '021-111222', 'alamat' => 'Cikarang Industrial Estate'],
+            ['kode' => 'SUP-007', 'nama' => 'PT. Antam Medika Alat', 'jenis' => 'Alkes', 'no_telepon' => '022-333444', 'alamat' => 'Jl. Braga No 15, Bandung'],
+            ['kode' => 'SUP-008', 'nama' => 'Maju Jaya Komputer', 'jenis' => 'Lainnya', 'no_telepon' => '081122334455', 'alamat' => 'Mangga Dua Square, Jakarta'],
+            ['kode' => 'SUP-009', 'nama' => 'CV. Bina Sarana Medika', 'jenis' => 'Alkes', 'no_telepon' => '024-555666', 'alamat' => 'Semarang Barat'],
+            ['kode' => 'SUP-010', 'nama' => 'PT. Auto Indo Ambulans', 'jenis' => 'Lainnya', 'no_telepon' => '021-999000', 'alamat' => 'Jl. MT Haryono, Jakarta'],
         ];
         foreach ($suppliers as $s) {
             DB::table('suppliers')->insert(array_merge($s, ['created_at' => $now]));
         }
 
-        // 8. KATEGORI ASET & ASET
+        // 8. KATEGORI ASET & ASET - Diperbanyak
         $katAset1 = DB::table('aset_kategoris')->insertGetId(['kode' => 'K-MED', 'nama' => 'Alat Medis & Keperawatan', 'jenis' => 'Peralatan', 'masa_manfaat_tahun' => 5]);
         $katAset2 = DB::table('aset_kategoris')->insertGetId(['kode' => 'K-IT', 'nama' => 'Komputer & IT', 'jenis' => 'Peralatan', 'masa_manfaat_tahun' => 3]);
+        $katAset3 = DB::table('aset_kategoris')->insertGetId(['kode' => 'K-MBL', 'nama' => 'Mebel & Furnitur', 'jenis' => 'Peralatan', 'masa_manfaat_tahun' => 5]);
+        $katAset4 = DB::table('aset_kategoris')->insertGetId(['kode' => 'K-KND', 'nama' => 'Kendaraan Bermotor', 'jenis' => 'Kendaraan', 'masa_manfaat_tahun' => 10]);
         
-        for ($i=1; $i<=10; $i++) {
+        $asetMedNames = ['Tensimeter Digital Omron', 'Stetoskop Littmann', 'Kursi Roda Standar', 'Tabung Oksigen 1m3', 'Bed Pasien Elektrik', 'ECG Monitor 3 Channel', 'Doppler Fetal Monitor', 'Lampu Tindakan Halogen', 'Sterilisator Kering', 'Timbangan Bayi Digital'];
+        for ($i=1; $i<=30; $i++) {
             DB::table('asets')->insert([
                 'kode_aset' => 'AST-MED-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'nama_aset' => 'Tensimeter Digital Omron ' . $i,
+                'nama_aset' => $asetMedNames[array_rand($asetMedNames)] . ' Unit ' . $i,
                 'kategori_id' => $katAset1,
-                'tanggal_perolehan' => Carbon::now()->subMonths(rand(1, 24))->format('Y-m-d'),
-                'nilai_perolehan' => 750000,
-                'nilai_buku' => 750000,
-                'kondisi' => 'Baik',
+                'tanggal_perolehan' => Carbon::now()->subMonths(rand(1, 48))->format('Y-m-d'),
+                'nilai_perolehan' => rand(50, 1500) * 10000,
+                'nilai_buku' => rand(20, 100) * 10000,
+                'kondisi' => rand(1,10) > 8 ? 'Rusak_Ringan' : (rand(1,10) > 9 ? 'Rusak_Berat' : 'Baik'),
                 'status' => 'Aktif',
                 'created_at' => $now,
             ]);
         }
-        for ($i=1; $i<=5; $i++) {
+        for ($i=1; $i<=20; $i++) {
             DB::table('asets')->insert([
                 'kode_aset' => 'AST-IT-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'nama_aset' => 'PC Desktop Lenovo Core i5 Unit ' . $i,
+                'nama_aset' => (rand(1,2) == 1 ? 'PC Desktop Lenovo Core i5' : 'Printer Epson L3110') . ' Unit ' . $i,
                 'kategori_id' => $katAset2,
-                'tanggal_perolehan' => Carbon::now()->subMonths(rand(1, 12))->format('Y-m-d'),
-                'nilai_perolehan' => 12000000,
-                'nilai_buku' => 12000000,
-                'kondisi' => 'Baik',
+                'tanggal_perolehan' => Carbon::now()->subMonths(rand(1, 24))->format('Y-m-d'),
+                'nilai_perolehan' => rand(200, 1200) * 10000,
+                'nilai_buku' => rand(100, 800) * 10000,
+                'kondisi' => rand(1,10) > 8 ? 'Rusak_Ringan' : 'Baik',
                 'status' => 'Aktif',
                 'created_at' => $now,
             ]);
         }
+        DB::table('asets')->insert([
+            'kode_aset' => 'AST-KND-0001',
+            'nama_aset' => 'Ambulans APV Arena',
+            'kategori_id' => $katAset4,
+            'tanggal_perolehan' => Carbon::now()->subMonths(12)->format('Y-m-d'),
+            'nilai_perolehan' => 250000000,
+            'nilai_buku' => 225000000,
+            'kondisi' => 'Baik',
+            'status' => 'Aktif',
+            'created_at' => $now,
+        ]);
 
-        // 9. OBAT & ALKES KATEGORI
+        // 9. OBAT & ALKES KATEGORI - Diperbanyak
         $katObat = DB::table('obat_alkes_kategoris')->insertGetId(['kode' => 'KO-01', 'nama' => 'Obat-obatan Medis', 'jenis' => 'Obat']);
         $katAlkes = DB::table('obat_alkes_kategoris')->insertGetId(['kode' => 'KA-01', 'nama' => 'Alat Kesehatan & BMHP', 'jenis' => 'Alkes']);
+        $katSirup = DB::table('obat_alkes_kategoris')->insertGetId(['kode' => 'KO-02', 'nama' => 'Obat Sirup / Cair', 'jenis' => 'Obat']);
 
         $obats = [
             ['kategori_id' => $katObat, 'kode_barang' => 'OBT-001', 'nama_generik' => 'Paracetamol 500mg', 'satuan' => 'Tablet'],
@@ -181,50 +243,70 @@ class DatabaseSeeder extends Seeder
             ['kategori_id' => $katObat, 'kode_barang' => 'OBT-003', 'nama_generik' => 'Ibuprofen 400mg', 'satuan' => 'Tablet'],
             ['kategori_id' => $katObat, 'kode_barang' => 'OBT-004', 'nama_generik' => 'Vitamin C 50mg', 'satuan' => 'Tablet'],
             ['kategori_id' => $katObat, 'kode_barang' => 'OBT-005', 'nama_generik' => 'Cetirizine 10mg', 'satuan' => 'Tablet'],
+            ['kategori_id' => $katObat, 'kode_barang' => 'OBT-006', 'nama_generik' => 'Amlodipine 5mg', 'satuan' => 'Tablet'],
+            ['kategori_id' => $katObat, 'kode_barang' => 'OBT-007', 'nama_generik' => 'Metformin 500mg', 'satuan' => 'Tablet'],
+            ['kategori_id' => $katObat, 'kode_barang' => 'OBT-008', 'nama_generik' => 'Captopril 25mg', 'satuan' => 'Tablet'],
+            ['kategori_id' => $katObat, 'kode_barang' => 'OBT-009', 'nama_generik' => 'Omeprazole 20mg', 'satuan' => 'Kapsul'],
+            ['kategori_id' => $katObat, 'kode_barang' => 'OBT-010', 'nama_generik' => 'Antasida Doen', 'satuan' => 'Tablet Kunyah'],
+            ['kategori_id' => $katSirup, 'kode_barang' => 'OBT-011', 'nama_generik' => 'Paracetamol Sirup 120mg/5ml', 'satuan' => 'Botol'],
+            ['kategori_id' => $katSirup, 'kode_barang' => 'OBT-012', 'nama_generik' => 'Ambroxol Sirup', 'satuan' => 'Botol'],
+            ['kategori_id' => $katSirup, 'kode_barang' => 'OBT-013', 'nama_generik' => 'Antasida Doen Suspensi', 'satuan' => 'Botol'],
             ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-001', 'nama_generik' => 'Masker Bedah 3 Ply', 'satuan' => 'Box'],
             ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-002', 'nama_generik' => 'Handscoon Non-Steril', 'satuan' => 'Box'],
             ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-003', 'nama_generik' => 'Spuit 3cc', 'satuan' => 'Pcs'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-004', 'nama_generik' => 'Spuit 5cc', 'satuan' => 'Pcs'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-005', 'nama_generik' => 'Kasa Steril 16x16', 'satuan' => 'Kotak'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-006', 'nama_generik' => 'Plester Gulung', 'satuan' => 'Roll'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-007', 'nama_generik' => 'Alkohol 70% 100ml', 'satuan' => 'Botol'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-008', 'nama_generik' => 'Betadine 60ml', 'satuan' => 'Botol'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-009', 'nama_generik' => 'Infus Set Dewasa', 'satuan' => 'Set'],
+            ['kategori_id' => $katAlkes, 'kode_barang' => 'ALK-010', 'nama_generik' => 'Cairan Infus RL 500ml', 'satuan' => 'Botol'],
         ];
         foreach ($obats as $o) {
             DB::table('obat_alkes')->insert(array_merge($o, ['created_at' => $now]));
         }
 
-        // 10. INDIKATOR MUTU
+        // 10. INDIKATOR MUTU - Diperbanyak
         $mutus = [
             ['kode' => 'IM-01', 'nama' => 'Waktu Tunggu Rawat Jalan', 'satuan' => 'Menit', 'jenis' => 'waktu_tunggu', 'target_nilai' => 60, 'arah_target' => 'min'],
             ['kode' => 'IM-02', 'nama' => 'Ketersediaan Obat Essensial', 'satuan' => 'Persen', 'jenis' => 'ketersediaan_obat', 'target_nilai' => 100, 'arah_target' => 'max'],
             ['kode' => 'IM-03', 'nama' => 'Kepuasan Pasien', 'satuan' => 'Persen', 'jenis' => 'kepuasan', 'target_nilai' => 85, 'arah_target' => 'max'],
             ['kode' => 'IM-04', 'nama' => 'Kunjungan Pasien Hipertensi Terkendali', 'satuan' => 'Persen', 'jenis' => 'lainnya', 'target_nilai' => 80, 'arah_target' => 'max'],
             ['kode' => 'IM-05', 'nama' => 'Kecepatan Respon Komplain', 'satuan' => 'Jam', 'jenis' => 'waktu_tunggu', 'target_nilai' => 24, 'arah_target' => 'min'],
+            ['kode' => 'IM-06', 'nama' => 'Kepatuhan Cuci Tangan (Hand Hygiene)', 'satuan' => 'Persen', 'jenis' => 'lainnya', 'target_nilai' => 100, 'arah_target' => 'max'],
+            ['kode' => 'IM-07', 'nama' => 'Kepatuhan Penggunaan APD', 'satuan' => 'Persen', 'jenis' => 'lainnya', 'target_nilai' => 100, 'arah_target' => 'max'],
+            ['kode' => 'IM-08', 'nama' => 'Angka Keterlambatan Masuk Kerja', 'satuan' => 'Persen', 'jenis' => 'lainnya', 'target_nilai' => 5, 'arah_target' => 'min'],
+            ['kode' => 'IM-09', 'nama' => 'Waktu Penyediaan Dokumen Rekam Medis', 'satuan' => 'Menit', 'jenis' => 'waktu_tunggu', 'target_nilai' => 10, 'arah_target' => 'min'],
+            ['kode' => 'IM-10', 'nama' => 'Kejadian Pasien Jatuh', 'satuan' => 'Kejadian', 'jenis' => 'lainnya', 'target_nilai' => 0, 'arah_target' => 'min'],
         ];
         foreach ($mutus as $m) {
             DB::table('indikator_mutus')->insert(array_merge($m, ['created_at' => $now]));
         }
 
-        // 11. PENERIMAAN KAS
-        for ($i=1; $i<=20; $i++) {
+        // 11. PENERIMAAN KAS - Diperbanyak (70 Data)
+        for ($i=1; $i<=70; $i++) {
             DB::table('penerimaan_kass')->insert([
                 'sumber_dana_id' => $sd_pad,
                 'no_bukti' => 'BKM-PAD-' . date('Ym') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'tanggal' => Carbon::now()->subDays(rand(1, 30))->format('Y-m-d'),
+                'tanggal' => Carbon::now()->subDays(rand(1, 180))->format('Y-m-d'),
                 'jenis_penerimaan' => 'Layanan_Umum',
-                'keterangan' => 'Penerimaan Retribusi Pasien Umum Poli',
-                'jumlah' => rand(150000, 1500000),
-                'metode_pembayaran' => 'Tunai',
-                'status' => 'posted',
+                'keterangan' => 'Penerimaan Retribusi Pasien Umum Poli ' . (rand(1,2)==1 ? 'Umum' : 'Gigi'),
+                'jumlah' => rand(15, 350) * 10000,
+                'metode_pembayaran' => rand(1, 10) > 8 ? 'Qris' : 'Tunai',
+                'status' => rand(1, 100) > 5 ? 'posted' : 'draft',
                 'input_oleh' => 1,
                 'created_at' => $now
             ]);
         }
-        // Penerimaan JKN Bulanan
-        for ($i=1; $i<=3; $i++) {
+        // Penerimaan JKN Bulanan (12 Bulan)
+        for ($i=1; $i<=12; $i++) {
             DB::table('penerimaan_kass')->insert([
                 'sumber_dana_id' => $sd_jkn,
                 'no_bukti' => 'BKM-JKN-' . date('Ym') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'tanggal' => Carbon::now()->subMonths($i)->format('Y-m-d'),
+                'tanggal' => Carbon::now()->subMonths($i)->startOfMonth()->addDays(rand(2, 5))->format('Y-m-d'),
                 'jenis_penerimaan' => 'BPJS_Kapitasi',
                 'keterangan' => 'Penerimaan Dana Kapitasi JKN Bulan Ke-' . $i,
-                'jumlah' => 350000000,
+                'jumlah' => 350000000 + rand(-10000000, 10000000),
                 'metode_pembayaran' => 'Transfer',
                 'status' => 'posted',
                 'input_oleh' => 1,
@@ -232,31 +314,31 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 12. PENGELUARAN KAS
-        for ($i=1; $i<=15; $i++) {
+        // 12. PENGELUARAN KAS - Diperbanyak (80 Data)
+        for ($i=1; $i<=50; $i++) {
             DB::table('pengeluaran_kass')->insert([
                 'sumber_dana_id' => $sd_pad,
                 'no_bukti' => 'BKK-PAD-' . date('Ym') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'tanggal' => Carbon::now()->subDays(rand(1, 30))->format('Y-m-d'),
-                'jenis_pengeluaran' => 'ATK',
-                'keterangan' => 'Pembayaran Tagihan ATK Puskesmas Bulan Ini ' . $i,
-                'jumlah_bruto' => rand(500000, 5000000),
-                'jumlah_neto' => rand(500000, 5000000),
-                'metode_pembayaran' => 'Transfer',
-                'status' => 'dibayar',
+                'tanggal' => Carbon::now()->subDays(rand(1, 180))->format('Y-m-d'),
+                'jenis_pengeluaran' => rand(1, 2) == 1 ? 'ATK' : 'Operasional',
+                'keterangan' => 'Pembayaran Tagihan Operasional Puskesmas ' . $i,
+                'jumlah_bruto' => rand(50, 500) * 10000,
+                'jumlah_neto' => rand(48, 500) * 10000,
+                'metode_pembayaran' => rand(1, 10) > 6 ? 'Transfer' : 'Tunai',
+                'status' => rand(1, 100) > 5 ? 'dibayar' : 'draft',
                 'input_oleh' => 1,
                 'created_at' => $now
             ]);
         }
-        for ($i=1; $i<=5; $i++) {
+        for ($i=1; $i<=30; $i++) {
             DB::table('pengeluaran_kass')->insert([
                 'sumber_dana_id' => $sd_jkn,
                 'no_bukti' => 'BKK-JKN-' . date('Ym') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'tanggal' => Carbon::now()->subDays(rand(1, 30))->format('Y-m-d'),
-                'jenis_pengeluaran' => 'Jasa_Pegawai',
-                'keterangan' => 'Pembayaran Jasa Pelayanan JKN Petugas Medis',
-                'jumlah_bruto' => 120000000,
-                'jumlah_neto' => 114000000,
+                'tanggal' => Carbon::now()->subDays(rand(1, 180))->format('Y-m-d'),
+                'jenis_pengeluaran' => rand(1, 3) == 1 ? 'Jasa_Pegawai' : (rand(1, 2) == 1 ? 'Obat' : 'Alkes'),
+                'keterangan' => 'Pembayaran Tagihan JKN / Operasional Medis ' . $i,
+                'jumlah_bruto' => rand(1000, 15000) * 10000,
+                'jumlah_neto' => rand(950, 14500) * 10000,
                 'metode_pembayaran' => 'Transfer',
                 'status' => 'dibayar',
                 'input_oleh' => 1,
@@ -264,17 +346,18 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 13. JURNAL UMUM
-        for ($i=1; $i<=25; $i++) {
+        // 13. JURNAL UMUM - Diperbanyak (150 Data)
+        for ($i=1; $i<=150; $i++) {
+            $amt = rand(10, 500) * 10000;
             DB::table('jurnal_umums')->insert([
                 'no_jurnal' => 'JU-' . date('Ym') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'tanggal' => Carbon::now()->subDays(rand(1, 30))->format('Y-m-d'),
-                'keterangan' => 'Pencatatan Transaksi Harian Ke-' . $i,
-                'sumber' => $i % 2 == 0 ? 'penerimaan' : 'pengeluaran',
-                'referensi_id' => $i,
-                'total_debit' => rand(100000, 10000000),
-                'total_kredit' => rand(100000, 10000000),
-                'status' => 'posted',
+                'tanggal' => Carbon::now()->subDays(rand(1, 360))->format('Y-m-d'),
+                'keterangan' => 'Pencatatan Jurnal Akuntansi Harian ' . $i,
+                'sumber' => rand(1, 3) == 1 ? 'penerimaan' : (rand(1, 2) == 1 ? 'pengeluaran' : 'manual'),
+                'referensi_id' => rand(1, 50),
+                'total_debit' => $amt,
+                'total_kredit' => $amt,
+                'status' => rand(1, 100) > 10 ? 'posted' : 'draft',
                 'dibuat_oleh' => 1,
                 'created_at' => $now
             ]);
