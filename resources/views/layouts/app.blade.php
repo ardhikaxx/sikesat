@@ -231,6 +231,9 @@
             <a href="{{ route('pengeluaran.index') }}" class="nav-item-link {{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}">
                 <i class="fas fa-file-invoice-dollar"></i> Pengeluaran
             </a>
+            <a href="{{ route('pengajuan-pengadaan.index') }}" class="nav-item-link {{ request()->routeIs('pengajuan-pengadaan.*') ? 'active' : '' }}">
+                <i class="fas fa-shopping-cart"></i> E-Procurement
+            </a>
             <a href="{{ route('jaspel-perhitungan.index') }}" class="nav-item-link {{ request()->routeIs('jaspel-*') ? 'active' : '' }}">
                 <i class="fas fa-hand-holding-medical"></i> Jasa Pelayanan
             </a>

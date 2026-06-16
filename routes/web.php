@@ -86,6 +86,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pemeliharaan-aset', App\Http\Controllers\PemeliharaanAsetController::class);
     Route::resource('penerimaan-kas', App\Http\Controllers\PenerimaanKasController::class);
     Route::resource('penerimaan-kas-detail', App\Http\Controllers\PenerimaanKasDetailController::class);
+    Route::post('pengajuan-pengadaan/{id}/verify', [App\Http\Controllers\PengajuanPengadaanController::class, 'verify'])->name('pengajuan-pengadaan.verify');
+    Route::post('pengajuan-pengadaan/{id}/approve', [App\Http\Controllers\PengajuanPengadaanController::class, 'approve'])->name('pengajuan-pengadaan.approve');
+    Route::post('pengajuan-pengadaan/{id}/reject', [App\Http\Controllers\PengajuanPengadaanController::class, 'reject'])->name('pengajuan-pengadaan.reject');
     Route::resource('pengajuan-pengadaan', App\Http\Controllers\PengajuanPengadaanController::class);
     Route::resource('pengajuan-pengadaan-item', App\Http\Controllers\PengajuanPengadaanItemController::class);
     Route::post('pengeluaran-kas/{id}/verify', [App\Http\Controllers\PengeluaranKasController::class, 'verify'])->name('pengeluaran-kas.verify');
