@@ -181,6 +181,13 @@
             tarifSelect.removeAttribute('required');
             obatSelect.setAttribute('required', 'required');
             priceInput.readOnly = true;
+            
+            // Re-init select2 to fix width issue when shown from display:none
+            if ($(obatSelect).hasClass('select2-hidden-accessible')) {
+                $(obatSelect).select2('destroy');
+            }
+            $(obatSelect).select2({ theme: 'bootstrap-5', width: '100%' });
+
         } else if (select.value === 'Lainnya') {
             textWrapper.style.display = 'block';
             tarifWrapper.style.display = 'none';
@@ -200,6 +207,12 @@
             tarifSelect.setAttribute('required', 'required');
             obatSelect.removeAttribute('required');
             priceInput.readOnly = true;
+            
+            // Re-init select2 to fix width issue when shown from display:none
+            if ($(tarifSelect).hasClass('select2-hidden-accessible')) {
+                $(tarifSelect).select2('destroy');
+            }
+            $(tarifSelect).select2({ theme: 'bootstrap-5', width: '100%' });
         }
         
         // Reset values
