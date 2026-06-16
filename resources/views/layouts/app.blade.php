@@ -233,13 +233,13 @@
             <a href="{{ route('jaspel-perhitungan.index') }}" class="nav-item-link {{ request()->routeIs('jaspel-*') ? 'active' : '' }}">
                 <i class="fas fa-hand-holding-medical"></i> Jasa Pelayanan
             </a>
-            <a href="{{ route('jurnal.index') }}" class="nav-item-link {{ request()->routeIs('jurnal.*') ? 'active' : '' }}">
+            <a href="{{ route('jurnal.index') }}" class="nav-item-link {{ request()->routeIs('jurnal*', 'buku-besar*', 'neraca-saldo*') ? 'active' : '' }}">
                 <i class="fas fa-book"></i> Akuntansi & Jurnal
             </a>
-            <a href="{{ route('rba.index') }}" class="nav-item-link {{ request()->routeIs('rba.*') ? 'active' : '' }}">
+            <a href="{{ route('rba.index') }}" class="nav-item-link {{ request()->routeIs('rba*', 'rencana-*', 'rka-*', 'tahun-anggaran*') ? 'active' : '' }}">
                 <i class="fas fa-chart-line"></i> RBA & Anggaran
             </a>
-            <a href="{{ route('mutu.index') }}" class="nav-item-link {{ request()->routeIs('mutu.*') ? 'active' : '' }}">
+            <a href="{{ route('mutu.index') }}" class="nav-item-link {{ request()->routeIs('mutu*', 'indikator-mutu*', 'realisasi-indikator-mutu*', 'survei-kepuasan*') ? 'active' : '' }}">
                 <i class="fas fa-heartbeat"></i> Mutu Layanan
             </a>
             <a href="{{ route('spm-indikator.index') }}" class="nav-item-link {{ request()->routeIs('spm-*') ? 'active' : '' }}">
@@ -250,7 +250,7 @@
             </a>
 
             <div class="sidebar-section-title">Master Data</div>
-            <a href="{{ route('obat.index') }}" class="nav-item-link {{ request()->routeIs('obat.*') ? 'active' : '' }}">
+            <a href="{{ route('obat.index') }}" class="nav-item-link {{ request()->routeIs('obat*', 'distribusi*') ? 'active' : '' }}">
                 <i class="fas fa-pills"></i> Obat & Alkes
             </a>
             <a href="{{ route('akun-akuntansi.index') }}" class="nav-item-link {{ request()->routeIs('akun-akuntansi.*') ? 'active' : '' }}">
@@ -265,7 +265,7 @@
             <a href="{{ route('supplier.index') }}" class="nav-item-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
                 <i class="fas fa-truck"></i> Supplier
             </a>
-            <a href="{{ route('aset.index') }}" class="nav-item-link {{ request()->routeIs('aset.*') ? 'active' : '' }}">
+            <a href="{{ route('aset.index') }}" class="nav-item-link {{ request()->routeIs('aset*', 'penyusutan-aset*', 'pemeliharaan-aset*') ? 'active' : '' }}">
                 <i class="fas fa-desktop"></i> Inventaris Aset
             </a>
 
