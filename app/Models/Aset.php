@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Aset extends Model
 {
+    protected $guarded = [];
     //
     protected $table = 'asets';
 
