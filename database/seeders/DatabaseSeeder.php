@@ -363,6 +363,45 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        // ==========================================
+        // 13. Jaspel Perhitungan & Details
+        // ==========================================
+        $jaspelIds = [];
+        $sumberJaspel = ['BPJS', 'Umum', 'BOK'];
+        $statusJaspel = ['draft', 'verifikasi_ppk', 'approved_kepala', 'dicairkan'];
+        
+        for ($i = 1; $i <= 12; $i++) {
+            $jaspelId = DB::table('jaspel_perhitungans')->insertGetId([
+                'periode_bulan' => $i,
+                'periode_tahun' => 2026,
+                'sumber_dana' => $sumberJaspel[array_rand($sumberJaspel)],
+                'total_dana' => rand(500, 2000) * 100000, // 50jt - 200jt
+                'status' => $statusJaspel[array_rand($statusJaspel)],
+                'created_at' => Carbon::now()->subMonths(12 - $i)
+            ]);
+            $jaspelIds[] = $jaspelId;
+        }
+
+        $pegawaiIds = DB::table('pegawais')->pluck('id')->toArray();
+
+        foreach ($jaspelIds as $jid) {
+            $jaspelPerhitungan = DB::table('jaspel_perhitungans')->where('id', $jid)->first();
+            // Assign some amount to rand 20-50 pegawai
+            $pegawaiRand = (array) array_rand(array_flip($pegawaiIds), rand(20, min(50, count($pegawaiIds))));
+            $totalDana = $jaspelPerhitungan->total_dana;
+            $danaPerPegawai = $totalDana / count($pegawaiRand);
+
+            foreach ($pegawaiRand as $pid) {
+                DB::table('jaspel_details')->insert([
+                    'jaspel_perhitungan_id' => $jid,
+                    'pegawai_id' => $pid,
+                    'skor_total' => rand(50, 200),
+                    'nominal_diterima' => $danaPerPegawai + (rand(-10, 10) * 10000), // slight variation
+                    'created_at' => $jaspelPerhitungan->created_at
+                ]);
+            }
+        }
+
         $this->command->info('Database Seeded Successfully with Massive Realistic Dummy Data!');
     }
 }
