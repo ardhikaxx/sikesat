@@ -615,6 +615,99 @@ class DatabaseSeeder extends Seeder
             DB::table('kunjungan_pasiens')->insert($chunk);
         }
 
+        // ==========================================
+        // 20. Konfigurasi Sistem
+        // ==========================================
+        DB::table('konfigurasi_sistemas')->insert([
+            ['kunci' => 'NAMA_PUSKESMAS', 'nilai' => 'UPTD Puskesmas SIKESAT', 'jenis' => 'text', 'label' => 'Nama Instansi', 'created_at' => Carbon::now()],
+            ['kunci' => 'ALAMAT_PUSKESMAS', 'nilai' => 'Jl. Kesehatan No. 99, Kota Harapan', 'jenis' => 'text', 'label' => 'Alamat Lengkap', 'created_at' => Carbon::now()],
+            ['kunci' => 'KEPALA_PUSKESMAS', 'nilai' => 'dr. H. Wahyu Hartono, M.Kes', 'jenis' => 'text', 'label' => 'Nama Kepala Puskesmas', 'created_at' => Carbon::now()],
+            ['kunci' => 'EMAIL_PUSKESMAS', 'nilai' => 'info@puskesmas.go.id', 'jenis' => 'text', 'label' => 'Email Resmi', 'created_at' => Carbon::now()],
+        ]);
+
+        // ==========================================
+        // 21. Stok Gudang & Mutasi Stok (Penting untuk Farmasi)
+        // ==========================================
+        foreach ($obatIds as $oid) {
+            $stokAwal = rand(100, 1000);
+            $stokId = DB::table('stok_gudangs')->insertGetId([
+                'obat_alkes_id' => $oid,
+                'no_batch' => 'BATCH-' . rand(1000, 9999),
+                'tanggal_kedaluwarsa' => Carbon::now()->addMonths(rand(6, 24))->format('Y-m-d'),
+                'jumlah_masuk' => $stokAwal + 500,
+                'jumlah_keluar' => 500,
+                'stok_tersedia' => $stokAwal,
+                'harga_perolehan' => rand(5, 50) * 1000,
+                'created_at' => Carbon::now()->subMonths(3),
+                'updated_at' => Carbon::now()
+            ]);
+
+            // Simulasi Mutasi Masuk
+            DB::table('mutasi_stoks')->insert([
+                'obat_alkes_id' => $oid,
+                'stok_gudang_id' => $stokId,
+                'tanggal' => Carbon::now()->subDays(rand(10, 30))->format('Y-m-d'),
+                'jenis' => 'masuk',
+                'jumlah' => 200,
+                'saldo_sesudah' => $stokAwal + 200,
+                'sumber' => 'pengadaan',
+                'keterangan' => 'Penerimaan Obat dari PBF',
+                'input_oleh' => 1,
+                'created_at' => Carbon::now()
+            ]);
+
+            // Simulasi Mutasi Keluar
+            DB::table('mutasi_stoks')->insert([
+                'obat_alkes_id' => $oid,
+                'stok_gudang_id' => $stokId,
+                'tanggal' => Carbon::now()->subDays(rand(1, 9))->format('Y-m-d'),
+                'jenis' => 'keluar',
+                'jumlah' => 50,
+                'saldo_sesudah' => ($stokAwal + 200) - 50,
+                'sumber' => 'pelayanan',
+                'keterangan' => 'Pemakaian Resep Harian Poli',
+                'input_oleh' => 1,
+                'created_at' => Carbon::now()
+            ]);
+        }
+
+        // ==========================================
+        // 22. Survei Kepuasan Masyarakat (SKM)
+        // ==========================================
+        for ($bulan = 1; $bulan <= 6; $bulan++) {
+            foreach ([1, 2, 6, 7] as $uid) { // Unit pelayanan utama
+                DB::table('survei_kepuasans')->insert([
+                    'unit_id' => $uid,
+                    'periode_bulan' => $bulan,
+                    'periode_tahun' => 2026,
+                    'jumlah_responden' => rand(30, 150),
+                    'skor_rata_rata' => rand(75, 95) + (rand(0, 99) / 100),
+                    'persentase_puas' => rand(80, 99) + (rand(0, 99) / 100),
+                    'keterangan' => 'Hasil survei bulan ' . $bulan,
+                    'input_oleh' => 1,
+                    'created_at' => Carbon::now()
+                ]);
+            }
+        }
+
+        // ==========================================
+        // 23. Pengajuan Pengadaan (E-Procurement)
+        // ==========================================
+        for ($i = 1; $i <= 10; $i++) {
+            DB::table('pengajuan_pengadaans')->insert([
+                'no_pengajuan' => 'REQ/2026/06/' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'tanggal_pengajuan' => Carbon::now()->subDays(rand(1, 30))->format('Y-m-d'),
+                'unit_id' => rand(1, 5),
+                'jenis_pengadaan' => rand(1, 2) == 1 ? 'Obat' : 'ATK',
+                'prioritas' => rand(1, 3) == 1 ? 'tinggi' : 'sedang',
+                'deskripsi' => 'Pengajuan pengadaan rutin ' . $i,
+                'total_estimasi' => rand(10, 100) * 100000,
+                'status' => rand(1, 4) == 1 ? 'draft' : 'disetujui',
+                'diajukan_oleh' => 1,
+                'created_at' => Carbon::now()
+            ]);
+        }
+
         $this->command->info('Database Seeded Successfully with Massive Realistic Dummy Data!');
     }
 }

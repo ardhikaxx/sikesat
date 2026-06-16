@@ -70,22 +70,22 @@ class LaporanDinkesController extends Controller
     {
         // LPLPO (Lembar Pemakaian dan Permintaan Obat)
         $data = ObatAlkes::all()->map(function($obat) use ($bulan, $tahun) {
-            $stokAwal = StokGudang::where('obat_id', $obat->id)
-                                  ->whereMonth('tanggal_update', '<', $bulan)
-                                  ->whereYear('tanggal_update', '<=', $tahun)
-                                  ->latest('tanggal_update')
-                                  ->value('jumlah_stok') ?? 0;
+            $stokAwal = StokGudang::where('obat_alkes_id', $obat->id)
+                                  ->whereMonth('updated_at', '<', $bulan)
+                                  ->whereYear('updated_at', '<=', $tahun)
+                                  ->latest('updated_at')
+                                  ->value('stok_tersedia') ?? 0;
             
             $penerimaan = DB::table('mutasi_stoks')
-                            ->where('obat_id', $obat->id)
-                            ->where('jenis_mutasi', 'Masuk')
+                            ->where('obat_alkes_id', $obat->id)
+                            ->where('jenis', 'masuk')
                             ->whereMonth('tanggal', $bulan)
                             ->whereYear('tanggal', $tahun)
                             ->sum('jumlah');
 
             $pemakaian = DB::table('mutasi_stoks')
-                            ->where('obat_id', $obat->id)
-                            ->where('jenis_mutasi', 'Keluar')
+                            ->where('obat_alkes_id', $obat->id)
+                            ->where('jenis', 'keluar')
                             ->whereMonth('tanggal', $bulan)
                             ->whereYear('tanggal', $tahun)
                             ->sum('jumlah');
