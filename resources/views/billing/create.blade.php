@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label fw-semibold">Pasien <span class="text-danger">*</span></label>
-                    <select name="pasien_id" class="form-select" required>
+                    <select name="pasien_id" class="form-select select2" required>
                         <option value="">-- Pilih Pasien --</option>
                         @foreach($pasiens as $p)
                             <option value="{{ $p->id }}">{{ $p->no_rm }} - {{ $p->nama_lengkap }}</option>
@@ -100,6 +100,14 @@
 <script>
     let itemIndex = 0;
 
+    // Inisialisasi Select2 untuk dropdown utama
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
+    });
+
     function addItem() {
         const tbody = document.querySelector('#itemsTable tbody');
         const tr = document.createElement('tr');
@@ -118,12 +126,12 @@
                     <input type="text" name="items[${itemIndex}][nama_item]" class="form-control" placeholder="Nama Tindakan/Kamar">
                 </div>
                 <div class="input-tarif-wrapper">
-                    <select class="form-select tarif-select" required onchange="setHargaTarif(this, ${itemIndex})">
+                    <select class="form-select tarif-select select2-dynamic" required onchange="setHargaTarif(this, ${itemIndex})">
                         ${document.getElementById('tarifOptions').innerHTML}
                     </select>
                 </div>
                 <div class="input-obat-wrapper" style="display:none;">
-                    <select name="items[${itemIndex}][obat_id]" class="form-select obat-select" onchange="setHargaObat(this, ${itemIndex})">
+                    <select name="items[${itemIndex}][obat_id]" class="form-select obat-select select2-dynamic" onchange="setHargaObat(this, ${itemIndex})">
                         ${document.getElementById('obatOptions').innerHTML}
                     </select>
                 </div>
@@ -142,6 +150,13 @@
             </td>
         `;
         tbody.appendChild(tr);
+        
+        // Inisialisasi Select2 untuk baris yang baru ditambahkan
+        $(tr).find('.select2-dynamic').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
+        
         itemIndex++;
     }
 
