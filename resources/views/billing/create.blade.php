@@ -75,7 +75,7 @@
 </div>
 
 <!-- Template Obat untuk JS -->
-<select id="obatOptions" style="display:none;">
+<template id="obatOptions">
     <option value="">-- Pilih Obat --</option>
     @foreach($obats as $o)
         @php
@@ -85,15 +85,15 @@
         @endphp
         <option value="{{ $o->id }}" data-harga="{{ $hargaJual }}">{{ $o->kode_barang }} - {{ $o->nama_generik }} (Rp {{ number_format($hargaJual, 0, ',', '.') }})</option>
     @endforeach
-</select>
+</template>
 
 <!-- Template Tarif untuk JS -->
-<select id="tarifOptions" style="display:none;">
+<template id="tarifOptions">
     <option value="">-- Pilih Layanan/Tindakan --</option>
     @foreach($tarifs as $t)
         <option value="{{ $t->id }}" data-harga="{{ $t->tarif }}">{{ $t->nama_layanan }} (Rp {{ number_format($t->tarif, 0, ',', '.') }})</option>
     @endforeach
-</select>
+</template>
 @endsection
 
 @push('scripts')
