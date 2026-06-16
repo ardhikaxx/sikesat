@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BillingPasien;
+use App\Models\StokGudang;
+use App\Models\MutasiStok;
+use App\Models\PenerimaanKas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -79,55 +82,75 @@ class BillingPasienController extends Controller
 
     public function pay(Request $request, $id)
     {
-        $billing = BillingPasien::with('items')->findOrFail($id);
-        if ($billing->status == 'Lunas') {
-            return back()->with('error', 'Tagihan sudah lunas!');
+        $request->validate([
+            'metode_pembayaran' => 'required',
+            'uang_dibayar' => 'required|numeric'
+        ]);
+
+        $billing = BillingPasien::with('pasien', 'items')->findOrFail($id);
+        
+        if ($request->uang_dibayar < $billing->total_tagihan) {
+            return back()->with('error', 'Uang pembayaran kurang dari total tagihan.');
         }
 
         DB::beginTransaction();
         try {
-            // 1. Update status
+            // Update status billing
             $billing->update([
                 'status' => 'Lunas',
                 'metode_pembayaran' => $request->metode_pembayaran
             ]);
 
-            // 2. Masukkan ke Penerimaan Kas
-            $penerimaan = \App\Models\PenerimaanKas::create([
-                'tanggal' => date('Y-m-d'),
-                'nomor_bukti' => 'BKM-' . time(),
-                'jumlah' => $billing->total_tagihan,
-                'keterangan' => 'Pembayaran Pasien ' . $billing->pasien->nama_lengkap . ' (' . $billing->no_invoice . ')',
-                'status' => 'posted' // Anggap langsung posted untuk demo
-            ]);
-
-            $billing->update(['penerimaan_kas_id' => $penerimaan->id]);
-
-            // 3. Potong Stok Obat & Catat Mutasi
+            // Jika ada item obat, kurangi stok
             foreach ($billing->items as $item) {
                 if ($item->jenis_item == 'Obat' && $item->obat_id) {
-                    $stok = \App\Models\StokGudang::where('obat_id', $item->obat_id)->first();
-                    if ($stok) {
-                        $stok->jumlah_stok -= $item->jumlah;
-                        $stok->save();
-
-                        \App\Models\MutasiStok::create([
-                            'obat_id' => $item->obat_id,
-                            'tanggal' => date('Y-m-d'),
-                            'jenis_mutasi' => 'Keluar',
+                    $stok = StokGudang::where('obat_alkes_id', $item->obat_id)->first();
+                    if ($stok && $stok->stok_tersedia >= $item->jumlah) {
+                        $stok->decrement('stok_tersedia', $item->jumlah);
+                        
+                        MutasiStok::create([
+                            'obat_alkes_id' => $item->obat_id,
+                            'stok_gudang_id' => $stok->id,
+                            'tanggal' => now()->format('Y-m-d'),
+                            'jenis' => 'keluar',
                             'jumlah' => $item->jumlah,
-                            'keterangan' => 'Terjual - ' . $billing->no_invoice
+                            'saldo_sesudah' => $stok->stok_tersedia, // Already decremented
+                            'sumber' => 'pelayanan',
+                            'referensi_id' => $billing->id,
+                            'keterangan' => 'Penjualan ke pasien: ' . $billing->pasien->nama,
+                            'input_oleh' => auth()->id() ?? 1
                         ]);
                     }
                 }
             }
 
+            // Catat ke Penerimaan Kas (Pendapatan BLUD)
+            $sumberDanaUmum = DB::table('sumber_danas')->where('kode', 'SD-01')->first(); // PAD Umum
+            PenerimaanKas::create([
+                'no_bukti' => 'BKM-KASIR-' . time(),
+                'tanggal' => now()->format('Y-m-d'),
+                'jenis_penerimaan' => 'Layanan_Umum',
+                'sumber_dana_id' => $sumberDanaUmum->id ?? 1,
+                'keterangan' => 'Pembayaran Pasien ' . $billing->pasien->nama,
+                'jumlah' => $billing->total_tagihan,
+                'metode_pembayaran' => $request->metode_pembayaran,
+                'status' => 'draft', // Menunggu setor bendahara
+                'input_oleh' => auth()->id() ?? 1
+            ]);
+
             DB::commit();
-            return back()->with('success', 'Pembayaran berhasil diproses. Stok obat telah disesuaikan dan kas bertambah!');
+            return back()->with('success', 'Pembayaran berhasil diproses.')->with('print_id', $billing->id);
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
         }
+    }
+
+    public function print($id)
+    {
+        $billing = BillingPasien::with('pasien', 'items')->findOrFail($id);
+        $config = DB::table('konfigurasi_sistemas')->pluck('nilai', 'kunci')->toArray();
+        return view('billing.print', compact('billing', 'config'));
     }
 
     public function destroy($id)

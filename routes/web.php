@@ -83,6 +83,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('penerimaan-kas-detail', App\Http\Controllers\PenerimaanKasDetailController::class);
     Route::resource('pengajuan-pengadaan', App\Http\Controllers\PengajuanPengadaanController::class);
     Route::resource('pengajuan-pengadaan-item', App\Http\Controllers\PengajuanPengadaanItemController::class);
+    Route::post('pengeluaran-kas/{id}/verify', [App\Http\Controllers\PengeluaranKasController::class, 'verify'])->name('pengeluaran-kas.verify');
+    Route::post('pengeluaran-kas/{id}/pay', [App\Http\Controllers\PengeluaranKasController::class, 'pay'])->name('pengeluaran-kas.pay');
     Route::resource('pengeluaran-kas', App\Http\Controllers\PengeluaranKasController::class);
     Route::resource('pengeluaran-kas-detail', App\Http\Controllers\PengeluaranKasDetailController::class);
     Route::post('penyusutan-aset/generate', [App\Http\Controllers\PenyusutanAsetController::class, 'generate'])->name('penyusutan-aset.generate');
@@ -104,6 +106,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Billing / Kasir Pasien
     Route::post('billing/{id}/pay', [App\Http\Controllers\BillingPasienController::class, 'pay'])->name('billing.pay');
+    Route::get('billing/{id}/print', [App\Http\Controllers\BillingPasienController::class, 'print'])->name('billing.print');
     Route::resource('billing', App\Http\Controllers\BillingPasienController::class);
 
     // Laporan Dinkes (LB1-LB4)

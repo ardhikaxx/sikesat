@@ -44,6 +44,9 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-1">
+                                @if($item->status == 'Lunas')
+                                    <a href="{{ route('billing.print', $item->id) }}" target="_blank" class="btn-action btn-action-print" title="Cetak"><i class="fas fa-print"></i></a>
+                                @endif
                                 <a href="{{ route('billing.show', $item->id) }}" class="btn-action btn-action-view" title="Detail & Bayar"><i class="fas fa-eye"></i></a>
                                 @if($item->status == 'Belum Bayar')
                                 <form action="{{ route('billing.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan tagihan ini?')">

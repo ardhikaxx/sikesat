@@ -43,6 +43,34 @@ class PengeluaranKasController extends Controller
         return redirect()->route('pengeluaran-kas.index')->with('sukses', 'Data berhasil diupdate');
     }
 
+    public function verify($id)
+    {
+        $data = PengeluaranKas::findOrFail($id);
+        if ($data->status == 'draft') {
+            $data->update([
+                'status' => 'diverifikasi',
+                'diverifikasi_oleh' => auth()->id() ?? 1,
+                'diverifikasi_at' => now()
+            ]);
+            return redirect()->back()->with('success', 'Bukti Pengeluaran Kas (SPJ) berhasil diverifikasi.');
+        }
+        return redirect()->back()->with('error', 'Status tidak valid untuk diverifikasi.');
+    }
+
+    public function pay($id)
+    {
+        $data = PengeluaranKas::findOrFail($id);
+        if ($data->status == 'diverifikasi' || $data->status == 'disetujui') {
+            $data->update([
+                'status' => 'dibayar',
+                'dibayar_oleh' => auth()->id() ?? 1,
+                'dibayar_at' => now()
+            ]);
+            return redirect()->back()->with('success', 'Pengeluaran Kas berhasil dibayarkan.');
+        }
+        return redirect()->back()->with('error', 'Status tidak valid untuk dibayar.');
+    }
+
     public function destroy($id)
     {
         PengeluaranKas::destroy($id);
