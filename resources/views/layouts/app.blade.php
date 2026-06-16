@@ -38,49 +38,86 @@
             overflow-x: hidden;
         }
 
-        /* Sidebar */
+        /* Sidebar - Premium Dark Theme */
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
             height: 100vh;
             width: 260px;
-            background-color: #FFFFFF;
-            border-right: 1px solid #E2E8F0;
+            background-color: var(--navy-dark);
+            border-right: none;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
             z-index: 1000;
             transition: all 0.3s ease;
             overflow-y: auto;
+            color: #E2E8F0;
         }
+        
+        /* Custom Scrollbar for Sidebar */
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
         .sidebar-header {
             height: 64px;
-            background-color: var(--teal-primary);
-            color: white;
+            background-color: rgba(0,0,0,0.15);
+            color: #FFFFFF;
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 24px;
             font-family: 'Noto Serif', serif;
             font-weight: 700;
             font-size: 1.25rem;
-            gap: 10px;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        .sidebar-header i {
+            color: var(--teal-light);
+            font-size: 1.4rem;
+        }
+        
         .nav-item-link {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: var(--text-main);
+            margin: 4px 16px;
+            padding: 10px 16px;
+            color: #A0AEC0;
             text-decoration: none;
             font-weight: 500;
-            transition: background 0.2s, color 0.2s;
+            border-radius: 8px;
+            transition: all 0.25s ease;
             gap: 12px;
         }
-        .nav-item-link:hover, .nav-item-link.active {
-            background-color: var(--teal-bg);
-            color: var(--teal-primary);
+        .nav-item-link:hover {
+            background-color: rgba(255,255,255,0.06);
+            color: #FFFFFF;
+            transform: translateX(4px);
+        }
+        .nav-item-link.active {
+            background-color: var(--teal-primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(13,110,110,0.4);
         }
         .nav-item-link i {
-            width: 20px;
+            width: 24px;
             text-align: center;
             font-size: 1.1rem;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .nav-item-link:hover i, .nav-item-link.active i {
+            opacity: 1;
+        }
+
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 24px 24px 8px 24px;
+            font-weight: 700;
         }
         
         /* Top Header */
@@ -185,7 +222,7 @@
                 <i class="fas fa-chart-pie"></i> Dashboard
             </a>
             
-            <div class="px-3 py-2 text-muted fw-bold" style="font-size: 0.75rem; text-transform: uppercase;">Transaksi</div>
+            <div class="sidebar-section-title">Transaksi</div>
             
             <a href="{{ route('penerimaan.index') }}" class="nav-item-link {{ request()->routeIs('penerimaan.*') ? 'active' : '' }}">
                 <i class="fas fa-wallet"></i> Penerimaan
@@ -209,7 +246,7 @@
                 <i class="fas fa-chart-line"></i> Kinerja BLUD (SPM)
             </a>
 
-            <div class="px-3 py-2 text-muted fw-bold mt-2" style="font-size: 0.75rem; text-transform: uppercase;">Master Data</div>
+            <div class="sidebar-section-title">Master Data</div>
             <a href="{{ route('obat.index') }}" class="nav-item-link {{ request()->routeIs('obat.*') ? 'active' : '' }}">
                 <i class="fas fa-pills"></i> Obat & Alkes
             </a>
@@ -229,7 +266,7 @@
                 <i class="fas fa-desktop"></i> Inventaris Aset
             </a>
 
-            <div class="px-3 py-2 text-muted fw-bold mt-2" style="font-size: 0.75rem; text-transform: uppercase;">Pengaturan</div>
+            <div class="sidebar-section-title">Pengaturan</div>
             <a href="{{ route('user.index') }}" class="nav-item-link {{ request()->routeIs('user.*') ? 'active' : '' }}">
                 <i class="fas fa-users-cog"></i> Hak Akses & User
             </a>
