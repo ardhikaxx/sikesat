@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class MutasiStok extends Model
 {
+    protected $guarded = [];
     //
 }
