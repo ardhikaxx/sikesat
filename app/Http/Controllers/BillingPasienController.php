@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BillingPasien;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BillingPasienController extends Controller
 {
@@ -27,7 +28,7 @@ class BillingPasienController extends Controller
 
     public function store(Request $request)
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $billing = BillingPasien::create([
                 'no_invoice' => $request->no_invoice,
@@ -60,10 +61,10 @@ class BillingPasienController extends Controller
 
             $billing->update(['total_tagihan' => $total]);
 
-            \DB::commit();
+            DB::commit();
             return redirect()->route('billing.index')->with('success', 'Tagihan berhasil dibuat!');
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -81,7 +82,7 @@ class BillingPasienController extends Controller
             return back()->with('error', 'Tagihan sudah lunas!');
         }
 
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             // 1. Update status
             $billing->update([
@@ -119,10 +120,10 @@ class BillingPasienController extends Controller
                 }
             }
 
-            \DB::commit();
+            DB::commit();
             return back()->with('success', 'Pembayaran berhasil diproses. Stok obat telah disesuaikan dan kas bertambah!');
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
         }
     }
