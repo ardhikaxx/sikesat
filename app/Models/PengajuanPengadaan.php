@@ -32,3 +32,4 @@ class PengajuanPengadaan extends Model
     {
         return $this->hasMany(PengajuanPengadaanItem::class, 'pengajuan_id');
     }
+}
