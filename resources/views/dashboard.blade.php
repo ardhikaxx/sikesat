@@ -133,72 +133,6 @@
 </div>
 
 <div class="row g-4 mb-4">
-    @if(count($stokMenipis) > 0)
-    <div class="col-12">
-        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-0" role="alert">
-            <i class="fas fa-exclamation-triangle fa-2x me-3 text-warning"></i>
-            <div>
-                <h6 class="fw-bold mb-1">Peringatan: Stok Obat/Alkes Menipis!</h6>
-                <p class="mb-0 text-dark" style="font-size: 0.875rem;">Ada {{ count($stokMenipis) }} item yang mencapai batas stok minimum. Segera lakukan pengadaan untuk: 
-                    <strong>{{ implode(', ', $stokMenipis->pluck('nama_generik')->toArray()) }}</strong>.
-                </p>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    @if($countAlertSipStr > 0)
-    <div class="col-12 mt-3">
-        <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center mb-0" role="alert">
-            <i class="fas fa-id-card fa-2x me-3 text-danger"></i>
-            <div class="w-100">
-                <h6 class="fw-bold mb-1 text-danger">Peringatan Kritis: SIP / STR Pegawai Kedaluwarsa!</h6>
-                <p class="mb-2 text-dark" style="font-size: 0.875rem;">
-                    Terdapat <strong>{{ $countAlertSipStr }} tenaga kesehatan</strong> yang izin praktik atau registrasinya sudah kedaluwarsa atau akan habis dalam 30 hari ke depan. Hal ini dapat berdampak pada penolakan klaim BPJS atau sanksi akreditasi.
-                </p>
-                <div class="table-responsive bg-white rounded border p-2">
-                    <table class="table table-sm table-borderless mb-0" style="font-size: 0.8125rem;">
-                        <thead class="text-muted border-bottom">
-                            <tr>
-                                <th>Nama Pegawai</th>
-                                <th>Jabatan</th>
-                                <th>Status SIP</th>
-                                <th>Status STR</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($alertSipStr as $nakes)
-                            <tr>
-                                <td class="fw-bold">{{ $nakes->nama }}</td>
-                                <td>{{ $nakes->jabatan }}</td>
-                                <td>
-                                    @if($nakes->tanggal_berakhir_sip)
-                                        @php $dSip = \Carbon\Carbon::now()->diffInDays($nakes->tanggal_berakhir_sip, false); @endphp
-                                        @if($dSip < 0) <span class="text-danger fw-bold">Kadaluarsa</span> 
-                                        @elseif($dSip <= 30) <span class="text-warning fw-bold">Sisa {{ intval($dSip) }} hr</span>
-                                        @else <span class="text-success">Aman</span> @endif
-                                    @else - @endif
-                                </td>
-                                <td>
-                                    @if($nakes->tanggal_berakhir_str)
-                                        @php $dStr = \Carbon\Carbon::now()->diffInDays($nakes->tanggal_berakhir_str, false); @endphp
-                                        @if($dStr < 0) <span class="text-danger fw-bold">Kadaluarsa</span> 
-                                        @elseif($dStr <= 30) <span class="text-warning fw-bold">Sisa {{ intval($dStr) }} hr</span>
-                                        @else <span class="text-success">Aman</span> @endif
-                                    @else - @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-</div>
-
-<div class="row g-4">
     <div class="col-md-8">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
@@ -220,6 +154,103 @@
         </div>
     </div>
 </div>
+
+@if(count($stokMenipis) > 0 || $countAlertSipStr > 0)
+<div class="row g-4">
+    @if(count($stokMenipis) > 0)
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-3 h-100" style="border-top: 4px solid #f59e0b;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: #FFF3CD; color: #D4860B;">
+                        <i class="fas fa-boxes fa-lg"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Stok Obat/Alkes Kritis</h6>
+                        <span class="badge bg-warning text-dark border"><i class="fas fa-exclamation-triangle"></i> {{ count($stokMenipis) }} Item Perlu Pengadaan</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.875rem;">
+                        <thead class="text-muted border-bottom">
+                            <tr>
+                                <th>Nama Item</th>
+                                <th class="text-center">Sisa Stok</th>
+                                <th class="text-center">Min. Stok</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($stokMenipis as $stok)
+                            <tr>
+                                <td class="fw-semibold text-dark">{{ $stok->nama_generik }}</td>
+                                <td class="text-center"><span class="badge bg-danger">{{ $stok->jumlah_stok }}</span></td>
+                                <td class="text-center text-muted">{{ $stok->stok_minimum }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($countAlertSipStr > 0)
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-3 h-100" style="border-top: 4px solid #ef4444;">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: #FEE2E2; color: #DC2626;">
+                        <i class="fas fa-id-card fa-lg"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">SIP/STR Kedaluwarsa</h6>
+                        <span class="badge bg-danger"><i class="fas fa-exclamation-circle"></i> {{ $countAlertSipStr }} Pegawai Terdampak</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.875rem;">
+                        <thead class="text-muted border-bottom">
+                            <tr>
+                                <th>Nama Pegawai</th>
+                                <th>Status SIP</th>
+                                <th>Status STR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($alertSipStr as $nakes)
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold text-dark">{{ $nakes->nama }}</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ $nakes->jabatan }}</div>
+                                </td>
+                                <td>
+                                    @if($nakes->tanggal_berakhir_sip)
+                                        @php $dSip = \Carbon\Carbon::now()->diffInDays($nakes->tanggal_berakhir_sip, false); @endphp
+                                        @if($dSip < 0) <span class="badge bg-danger">Kadaluarsa</span> 
+                                        @elseif($dSip <= 30) <span class="badge bg-warning text-dark">{{ intval($dSip) }} hr</span>
+                                        @else <span class="badge bg-success">Aman</span> @endif
+                                    @else <span class="text-muted">-</span> @endif
+                                </td>
+                                <td>
+                                    @if($nakes->tanggal_berakhir_str)
+                                        @php $dStr = \Carbon\Carbon::now()->diffInDays($nakes->tanggal_berakhir_str, false); @endphp
+                                        @if($dStr < 0) <span class="badge bg-danger">Kadaluarsa</span> 
+                                        @elseif($dStr <= 30) <span class="badge bg-warning text-dark">{{ intval($dStr) }} hr</span>
+                                        @else <span class="badge bg-success">Aman</span> @endif
+                                    @else <span class="text-muted">-</span> @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>
+@endif
 @endsection
 
 @push('scripts')
