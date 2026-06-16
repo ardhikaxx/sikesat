@@ -3,13 +3,15 @@
 @section('content')
 <div class="page-header">
     <div class="page-header__left">
-        <h1 class="page-header__title">Detail Pegawai</h1>
-        <a href="{{ route('pegawai.index') }}" class="text-decoration-none">&larr; Kembali</a>
+        <h1 class="page-header__title"><i class="fas fa-eye"></i> Detail Pegawai</h1>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ route('pegawai.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
 </div>
 <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-4">
-        <table class="table table-bordered">
+        <table class="table table-striped mb-0">
             <tr><th width="25%">Id</th><td>{{ $data->id }}</td></tr>
             <tr><th width="25%">User Id</th><td>{{ $data->user_id }}</td></tr>
             <tr><th width="25%">Nip</th><td>{{ $data->nip }}</td></tr>

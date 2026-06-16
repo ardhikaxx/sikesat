@@ -3,8 +3,10 @@
 @section('content')
 <div class="page-header">
     <div class="page-header__left">
-        <h1 class="page-header__title">Edit BukuBesar</h1>
-        <a href="{{ route('buku-besar.index') }}" class="text-decoration-none">&larr; Kembali</a>
+        <h1 class="page-header__title"><i class="fas fa-edit"></i> Edit BukuBesar</h1>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ route('buku-besar.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
 </div>
 <div class="card border-0 shadow-sm rounded-3">
@@ -12,38 +14,41 @@
         <form action="{{ route('buku-besar.update', $data->id) }}" method="POST">
             @csrf @method('PUT')
             <div class="mb-3">
-                <label class="form-label fw-semibold">Akun Id</label>
+                <label class="form-label fw-bold">Akun Id</label>
                 <input type="text" name="akun_id" class="form-control" value="{{ $data->akun_id }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">Jurnal Detail Id</label>
+                <label class="form-label fw-bold">Jurnal Detail Id</label>
                 <input type="text" name="jurnal_detail_id" class="form-control" value="{{ $data->jurnal_detail_id }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">Tanggal</label>
+                <label class="form-label fw-bold">Tanggal</label>
                 <input type="text" name="tanggal" class="form-control" value="{{ $data->tanggal }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">No Jurnal</label>
+                <label class="form-label fw-bold">No Jurnal</label>
                 <input type="text" name="no_jurnal" class="form-control" value="{{ $data->no_jurnal }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">Keterangan</label>
+                <label class="form-label fw-bold">Keterangan</label>
                 <input type="text" name="keterangan" class="form-control" value="{{ $data->keterangan }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">Debit</label>
+                <label class="form-label fw-bold">Debit</label>
                 <input type="text" name="debit" class="form-control" value="{{ $data->debit }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">Kredit</label>
+                <label class="form-label fw-bold">Kredit</label>
                 <input type="text" name="kredit" class="form-control" value="{{ $data->kredit }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-semibold">Saldo</label>
+                <label class="form-label fw-bold">Saldo</label>
                 <input type="text" name="saldo" class="form-control" value="{{ $data->saldo }}" required>
             </div>
-            <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Update</button>
+            <hr>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Simpan Perubahan</button>
+            </div>
         </form>
     </div>
 </div>

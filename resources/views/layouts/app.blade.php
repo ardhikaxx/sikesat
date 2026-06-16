@@ -157,6 +157,19 @@
             .top-header { left: 0; }
             .main-content { margin-left: 0; }
         }
+
+        /* Global Table Styles (from RBA) */
+        .sikesat-table thead th { background: var(--teal-primary); color: #FFFFFF; font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; padding: 12px 16px; border: none; }
+        .sikesat-table tbody td { font-size: 0.875rem; padding: 10px 16px; vertical-align: middle; border-bottom: 1px solid #EDF2F7; }
+        .sikesat-table tbody tr:hover { background: var(--teal-bg); }
+        .badge-status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-status::before { content: '●'; font-size: 0.5rem; }
+        .badge-status--draft { background: #EDF2F7; color: #718096; }
+        .badge-status--disahkan { background: #D4EDDA; color: #1A7F5A; }
+        .btn-action { width: 32px; height: 32px; border-radius: 6px; border: 1px solid; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+        .btn-action-view { border-color: #1565C0; color: #1565C0; background: #DBEAFE; }
+        .btn-action-edit { border-color: #D97706; color: #D97706; background: #FEF3C7; }
+        .btn-action-delete { border-color: #DC2626; color: #DC2626; background: #FEE2E2; }
     </style>
     @stack('styles')
 </head>
@@ -287,6 +300,16 @@
         @if(session('gagal') || session('error'))
             SikeAlert.gagal('{{ session('gagal') ?? session('error') }}');
         @endif
+
+        $(document).ready(function() {
+            $('.sikesat-table').each(function() {
+                if (!$.fn.DataTable.isDataTable(this)) {
+                    $(this).DataTable({
+                        language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json' }
+                    });
+                }
+            });
+        });
     </script>
 
     @stack('scripts')

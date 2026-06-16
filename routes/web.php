@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/jurnal', [App\Http\Controllers\JurnalUmumController::class, 'index'])->name('jurnal.index');
     Route::get('/obat', [App\Http\Controllers\ObatAlkesController::class, 'index'])->name('obat.index');
     Route::get('/user', [App\Http\Controllers\UserController::class, 'index'])->name('user.index');
+    Route::get('/user/{user}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('user.edit');
+    Route::put('/user/{user}', [App\Http\Controllers\UserController::class, 'update'])->name('user.update');
     Route::get('/aset', [App\Http\Controllers\AsetController::class, 'index'])->name('aset.index');
     Route::get('/rba', [App\Http\Controllers\RBAController::class, 'index'])->name('rba.index');
     Route::get('/mutu', [App\Http\Controllers\MutuController::class, 'index'])->name('mutu.index');

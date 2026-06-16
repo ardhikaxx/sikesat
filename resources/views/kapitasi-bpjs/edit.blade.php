@@ -3,15 +3,20 @@
 @section('content')
 <div class="page-header">
     <div class="page-header__left">
-        <h1 class="page-header__title">Edit KapitasiBpjs</h1>
-        <a href="{{ route('kapitasi-bpjs.index') }}" class="text-decoration-none">&larr; Kembali</a>
+        <h1 class="page-header__title"><i class="fas fa-edit"></i> Edit KapitasiBpjs</h1>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ route('kapitasi-bpjs.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
 </div>
 <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body p-4">
         <form action="{{ route('kapitasi-bpjs.update', $data->id) }}" method="POST">
             @csrf @method('PUT')
-            <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Update</button>
+            <hr>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Simpan Perubahan</button>
+            </div>
         </form>
     </div>
 </div>
