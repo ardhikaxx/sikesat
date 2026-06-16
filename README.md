@@ -1,59 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<br/>
+<div align="center">
+  <a href="#">
+    <img src="https://img.icons8.com/?size=256&id=114002&format=png" alt="Logo" width="80" height="80">
+  </a>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+  <h3 align="center">SIKESAT (Sistem Informasi Kesehatan Terpadu)</h3>
 
-## About Laravel
+  <p align="center">
+    Sistem ERP Tata Kelola Puskesmas dan Klinik Berbasis BLUD (Badan Layanan Umum Daerah)
+    <br/>
+    <br/>
+    <a href="#"><strong>Eksplorasi Dokumentasi »</strong></a>
+    <br/>
+    <br/>
+  </p>
+</div>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 💡 Tentang SIKESAT
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**SIKESAT** adalah solusi sistem informasi berbasis *Enterprise Resource Planning* (ERP) yang dirancang secara khusus untuk menjawab kompleksitas manajemen Puskesmas dan Fasilitas Pelayanan Kesehatan tingkat pertama, khususnya yang menerapkan fleksibilitas tata kelola keuangan BLUD.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Dengan arsitektur *monolith* Laravel yang tangguh, sistem ini mengintegrasikan ujung-ke-ujung proses operasional: mulai dari pasien masuk, penanganan stok farmasi, persetujuan logistik berjenjang, hingga bermuara ke pembuatan Laporan Keuangan dan Laporan Dinas Kesehatan secara presisi dan terotomatisasi.
 
-## Learning Laravel
+## 🚀 Modul & Fitur Unggulan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Sistem ini memiliki puluhan entitas manajemen yang dibagi menjadi beberapa modul besar:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. 🏥 Modul Pelayanan & Billing Kasir
+*   **Manajemen Pasien & Kunjungan:** Pencatatan demografi pasien terintegrasi.
+*   **Kasir/Billing Terpadu:** Transaksi langsung terhubung dengan stok gudang dan pencatatan Akuntansi Pendapatan.
+*   **Cetak Struk Thermal:** Bukti pembayaran instan ramah lingkungan *(Print ready)*.
 
-## Laravel Sponsors
+### 2. 💰 Modul Keuangan & Akuntansi BLUD
+*   **Arus Kas (Penerimaan & Pengeluaran):** Lengkap dengan mekanisme *Multi-Tier Approval* (Verifikasi SPJ oleh Bendahara & KTU).
+*   **Sistem Buku Besar:** Pencatatan otomatis ke Jurnal Umum, Jurnal Penyesuaian, Buku Besar, hingga Neraca Saldo.
+*   **Rencana Anggaran (RBA & RKA):** Pantau dan kelola anggaran belanja RKA BLUD secara transparan.
+*   **Laporan Keuangan Otomatis:** Menghasilkan laporan neraca dan arus kas sekali klik.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. 💊 Modul Gudang, Logistik & E-Procurement
+*   **E-Procurement Berjenjang:** Alur pengajuan pengadaan barang mulai dari Draft ➔ Diverifikasi KTU ➔ Disetujui Kepala Puskesmas.
+*   **Manajemen Apotek:** Inventarisasi Obat & Alkes dengan metode pemotongan stok *real-time* saat pelayanan.
+*   **Distribusi Internal:** Pencatatan Mutasi Stok dan distribusi dari Gudang Induk ke Poli/Unit Pelayanan.
 
-### Premium Partners
+### 4. 🗄️ Modul Aset & Penyusutan
+*   **Inventarisasi Aset Tetap:** Pencatatan lokasi, kondisi, dan nomor seri aset.
+*   **Kalkulator Penyusutan Aset:** Mesin penyusutan otomatis berdasarkan masa manfaat tahunan.
+*   **Pemeliharaan Aset:** *Log* riwayat reparasi dan perawatan instrumen medis.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 5. 👥 Modul Kepegawaian (HRIS) & Jaspel
+*   **Manajemen Pegawai:** Pemantauan profil pegawai dan dokter medis.
+*   **Alert Kedaluwarsa Izin (SIP/STR):** Sistem proaktif memberikan peringatan otomatis jika masa berlaku SIP/STR dokter tersisa kurang dari 30 hari.
+*   **Perhitungan Jaspel (Jasa Pelayanan):** Kalkulasi insentif bulanan berbasis formula beban kerja.
 
-## Contributing
+### 6. 📊 Modul Eksekutif & Laporan Dinkes
+*   **Dashboard Visual Interaktif:** Ringkasan sisa kas, trend pendapatan 12 bulan, peringatan stok menipis, dan peringatan kontrak vendor.
+*   **Generator Laporan (LB1 - LB4):** Cetak laporan standar Kementerian Kesehatan (Morbiditas, LPLPO, KIA, dan Kunjungan) hanya dengan satu tombol.
+*   **Indikator Mutu & SPM:** Penilaian realisasi standar minimal (Survei Kepuasan Masyarakat terintegrasi).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 7. ⚙️ Manajemen Pengguna & Keamanan
+*   **Profil Mandiri:** Modifikasi *password* dan info dasar oleh tiap pengguna.
+*   **Manajemen Peran Terpusat:** Role-Based Access Control (RBAC) via Spatie (Super Admin, Kasir, Gudang, dll).
 
-## Code of Conduct
+## 🛠️ Stack Teknologi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Sistem dibangun dengan teknologi modern dan mapan:
 
-## Security Vulnerabilities
+*   **Framework:** [Laravel 12.x](https://laravel.com)
+*   **Bahasa:** PHP 8.2+
+*   **Database:** MySQL 8+
+*   **Styling & UI:** Vanilla CSS, Bootstrap 5.x, FontAwesome 6, dan gaya Premium minimalis "Glassmorphism".
+*   **Time Processing:** Carbon
+*   **Auth & Roles:** Spatie Laravel-Permission
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 💻 Cara Instalasi
 
-## License
+Ikuti langkah-langkah berikut untuk menjalankan SIKESAT secara lokal:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Kloning Repositori**
+   ```bash
+   git clone https://github.com/ardhikaxx/sikesat.git
+   cd sikesat
+   ```
+2. **Instalasi Dependensi**
+   ```bash
+   composer install
+   npm install && npm run build
+   ```
+3. **Konfigurasi Environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Sesuaikan kredensial `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` di berkas `.env`.*
+4. **Migrasi & Penanaman Data Awal (Seeder)**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+   *Catatan: Sistem akan langsung terisi dengan 5.000+ baris data simulasi siap pakai (Obat, Pegawai, Stok, Pengeluaran, dll).*
+5. **Jalankan Peladen (Server)**
+   ```bash
+   php artisan serve
+   ```
+6. **Akses Aplikasi**
+   Buka peramban dan navigasikan ke `http://localhost:8000`.
+
+---
+> **Hak Cipta & Lisensi:** Dikembangkan dengan tingkat ketelitian tinggi khusus untuk fasilitas kesehatan modern.
