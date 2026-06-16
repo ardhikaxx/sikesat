@@ -40,7 +40,10 @@
                         <label class="form-label fw-semibold">Alamat Email</label>
                         <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i> Simpan Perubahan</button>
+                    <hr>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Simpan Data</button>
+            </div>
                 </form>
             </div>
         </div>

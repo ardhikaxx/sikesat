@@ -3,8 +3,10 @@
 @section('content')
 <div class="page-header">
     <div class="page-header__left">
-        <h1 class="page-header__title">Tambah JaspelPerhitungan</h1>
-        <a href="{{ route('jaspel-perhitungan.index') }}" class="text-decoration-none">&larr; Kembali</a>
+        <h1 class="page-header__title"><i class="fas fa-plus"></i> Tambah JaspelPerhitungan</h1>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ route('jaspel-perhitungan.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
 </div>
 <div class="card border-0 shadow-sm rounded-3">
@@ -40,7 +42,10 @@
                     <option value="dicairkan">Dicairkan</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+            <hr>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Simpan Data</button>
+            </div>
         </form>
     </div>
 </div>

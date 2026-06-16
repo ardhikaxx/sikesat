@@ -33,7 +33,10 @@
                 </div>
             </div>
             <hr>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Tarif</button>
+            <hr>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save"></i> Simpan Data</button>
+            </div>
         </form>
     </div>
 </div>
