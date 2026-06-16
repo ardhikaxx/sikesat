@@ -75,7 +75,7 @@
 </div>
 
 <!-- Template Obat untuk JS -->
-<template id="obatOptions">
+<select id="obatOptions" class="d-none" disabled>
     <option value="">-- Pilih Obat --</option>
     @foreach($obats as $o)
         @php
@@ -85,15 +85,15 @@
         @endphp
         <option value="{{ $o->id }}" data-harga="{{ $hargaJual }}">{{ $o->kode_barang }} - {{ $o->nama_generik }} (Rp {{ number_format($hargaJual, 0, ',', '.') }})</option>
     @endforeach
-</template>
+</select>
 
 <!-- Template Tarif untuk JS -->
-<template id="tarifOptions">
+<select id="tarifOptions" class="d-none" disabled>
     <option value="">-- Pilih Layanan/Tindakan --</option>
     @foreach($tarifs as $t)
         <option value="{{ $t->id }}" data-harga="{{ $t->tarif }}">{{ $t->nama_layanan }} (Rp {{ number_format($t->tarif, 0, ',', '.') }})</option>
     @endforeach
-</template>
+</select>
 @endsection
 
 @push('scripts')
@@ -191,9 +191,9 @@
             
             // Ganti opsi berdasarkan jenis
             if (jenis === 'Obat') {
-                $(itemSelect).html(document.getElementById('obatOptions').innerHTML);
+                $(itemSelect).html($('#obatOptions').html());
             } else {
-                $(itemSelect).html(document.getElementById('tarifOptions').innerHTML);
+                $(itemSelect).html($('#tarifOptions').html());
             }
             
             // Re-init Select2
