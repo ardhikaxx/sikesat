@@ -95,7 +95,7 @@ class DatabaseSeeder extends Seeder
             $fName = $jk == 'L' ? $firstNamesL[array_rand($firstNamesL)] : $firstNamesP[array_rand($firstNamesP)];
             $lName = $lastNames[array_rand($lastNames)];
             $jabatan = $jabatans[array_rand($jabatans)];
-            
+            $isNakes = in_array($jabatan, ['Dokter Umum', 'Perawat Pelaksana', 'Bidan Pelaksana', 'Analis Kesehatan', 'Asisten Apoteker']);
             DB::table('pegawais')->insert([
                 'nip' => '19' . rand(70,99) . str_pad(rand(1,12), 2, '0', STR_PAD_LEFT) . str_pad(rand(1,28), 2, '0', STR_PAD_LEFT) . '20' . rand(10,24) . str_pad(rand(1,12), 2, '0', STR_PAD_LEFT) . rand(1,2) . str_pad($i, 3, '0', STR_PAD_LEFT),
                 'nama' => $fName . ' ' . $lName,
@@ -103,6 +103,10 @@ class DatabaseSeeder extends Seeder
                 'jabatan' => $jabatan,
                 'jenis_pegawai' => rand(1, 100) > 60 ? 'PPPK' : (rand(1, 100) > 50 ? 'PNS' : 'Honorer'),
                 'unit_id' => $unitIds[array_rand($unitIds)],
+                'no_str' => $isNakes ? 'STR-' . rand(100000000, 999999999) : null,
+                'tanggal_berakhir_str' => $isNakes ? Carbon::now()->addDays(rand(-60, 365))->format('Y-m-d') : null,
+                'no_sip' => $isNakes ? 'SIP-' . rand(1000, 9999) . '/2026' : null,
+                'tanggal_berakhir_sip' => $isNakes ? Carbon::now()->addDays(rand(-60, 365))->format('Y-m-d') : null,
                 'created_at' => $now,
             ]);
         }

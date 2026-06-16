@@ -146,6 +146,56 @@
         </div>
     </div>
     @endif
+
+    @if($countAlertSipStr > 0)
+    <div class="col-12 mt-3">
+        <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center mb-0" role="alert">
+            <i class="fas fa-id-card fa-2x me-3 text-danger"></i>
+            <div class="w-100">
+                <h6 class="fw-bold mb-1 text-danger">Peringatan Kritis: SIP / STR Pegawai Kedaluwarsa!</h6>
+                <p class="mb-2 text-dark" style="font-size: 0.875rem;">
+                    Terdapat <strong>{{ $countAlertSipStr }} tenaga kesehatan</strong> yang izin praktik atau registrasinya sudah kedaluwarsa atau akan habis dalam 30 hari ke depan. Hal ini dapat berdampak pada penolakan klaim BPJS atau sanksi akreditasi.
+                </p>
+                <div class="table-responsive bg-white rounded border p-2">
+                    <table class="table table-sm table-borderless mb-0" style="font-size: 0.8125rem;">
+                        <thead class="text-muted border-bottom">
+                            <tr>
+                                <th>Nama Pegawai</th>
+                                <th>Jabatan</th>
+                                <th>Status SIP</th>
+                                <th>Status STR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($alertSipStr as $nakes)
+                            <tr>
+                                <td class="fw-bold">{{ $nakes->nama }}</td>
+                                <td>{{ $nakes->jabatan }}</td>
+                                <td>
+                                    @if($nakes->tanggal_berakhir_sip)
+                                        @php $dSip = \Carbon\Carbon::now()->diffInDays($nakes->tanggal_berakhir_sip, false); @endphp
+                                        @if($dSip < 0) <span class="text-danger fw-bold">Kadaluarsa</span> 
+                                        @elseif($dSip <= 30) <span class="text-warning fw-bold">Sisa {{ intval($dSip) }} hr</span>
+                                        @else <span class="text-success">Aman</span> @endif
+                                    @else - @endif
+                                </td>
+                                <td>
+                                    @if($nakes->tanggal_berakhir_str)
+                                        @php $dStr = \Carbon\Carbon::now()->diffInDays($nakes->tanggal_berakhir_str, false); @endphp
+                                        @if($dStr < 0) <span class="text-danger fw-bold">Kadaluarsa</span> 
+                                        @elseif($dStr <= 30) <span class="text-warning fw-bold">Sisa {{ intval($dStr) }} hr</span>
+                                        @else <span class="text-success">Aman</span> @endif
+                                    @else - @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 <div class="row g-4">

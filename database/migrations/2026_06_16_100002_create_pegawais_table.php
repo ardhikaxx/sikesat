@@ -22,6 +22,10 @@ return new class extends Migration
             $table->string('golongan', 10)->nullable();
             $table->enum('jenis_pegawai', ['PNS','PPPK','Kontrak','Honorer'])->default('PNS');
             $table->unsignedBigInteger('unit_id')->nullable();
+            $table->string('no_str', 50)->nullable();
+            $table->date('tanggal_berakhir_str')->nullable();
+            $table->string('no_sip', 50)->nullable();
+            $table->date('tanggal_berakhir_sip')->nullable();
             $table->date('tanggal_masuk')->nullable();
             $table->tinyInteger('status_aktif')->default(1);
             $table->timestamps();

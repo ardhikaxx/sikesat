@@ -61,11 +61,34 @@
             </div>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Tanggal Masuk</label>
-                <input type="text" name="tanggal_masuk" class="form-control" required>
+                <input type="date" name="tanggal_masuk" class="form-control">
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">No STR (Khusus Nakes)</label>
+                    <input type="text" name="no_str" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Masa Berlaku STR</label>
+                    <input type="date" name="tanggal_berakhir_str" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">No SIP (Khusus Nakes)</label>
+                    <input type="text" name="no_sip" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Masa Berlaku SIP</label>
+                    <input type="date" name="tanggal_berakhir_sip" class="form-control">
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Status Aktif</label>
-                <input type="text" name="status_aktif" class="form-control" required>
+                <select name="status_aktif" class="form-control" required>
+                    <option value="1">Aktif</option>
+                    <option value="0">Nonaktif</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
         </form>

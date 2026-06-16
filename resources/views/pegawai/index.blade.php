@@ -15,20 +15,68 @@
             <table class="table sikesat-table">
                 <thead>
                     <tr>
-                        <th>User Id</th>
-                        <th>Nip</th>
-                        <th>Nama</th>
-                        <th>Jenis Kelamin</th>
+                        <th>NIP</th>
+                        <th>Nama & Jabatan</th>
+                        <th>Status Pegawai</th>
+                        <th>Izin SIP</th>
+                        <th>Izin STR</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($data as $item)
                     <tr>
-                        <td>{{ $item->user_id }}</td>
-                        <td>{{ $item->nip }}</td>
-                        <td>{{ $item->nama }}</td>
-                        <td>{{ $item->jenis_kelamin }}</td>
+                        <td class="fw-semibold text-teal">{{ $item->nip ?? '-' }}</td>
+                        <td>
+                            <div class="fw-bold">{{ $item->nama }}</div>
+                            <div class="text-muted small">{{ $item->jabatan ?? '-' }}</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ $item->jenis_pegawai }}</span>
+                            @if($item->status_aktif)
+                                <span class="badge bg-success">Aktif</span>
+                            @else
+                                <span class="badge bg-danger">Nonaktif</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($item->no_sip)
+                                <div>{{ $item->no_sip }}</div>
+                                @if($item->tanggal_berakhir_sip)
+                                    @php
+                                        $diffSip = \Carbon\Carbon::now()->diffInDays($item->tanggal_berakhir_sip, false);
+                                    @endphp
+                                    @if($diffSip < 0)
+                                        <span class="badge bg-danger"><i class="fas fa-exclamation-circle"></i> Kadaluarsa</span>
+                                    @elseif($diffSip <= 30)
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle"></i> Sisa {{ intval($diffSip) }} Hari</span>
+                                    @else
+                                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Berlaku</span>
+                                    @endif
+                                @endif
+                            @else
+                                <span class="text-muted small">-</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($item->no_str)
+                                <div>{{ $item->no_str }}</div>
+                                @if($item->tanggal_berakhir_str)
+                                    @php
+                                        $diffStr = \Carbon\Carbon::now()->diffInDays($item->tanggal_berakhir_str, false);
+                                    @endphp
+                                    @if($diffStr < 0)
+                                        <span class="badge bg-danger"><i class="fas fa-exclamation-circle"></i> Kadaluarsa</span>
+                                    @elseif($diffStr <= 30)
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle"></i> Sisa {{ intval($diffStr) }} Hari</span>
+                                    @else
+                                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Berlaku</span>
+                                    @endif
+                                @endif
+                            @else
+                                <span class="text-muted small">-</span>
+                            @endif
+                        </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-1">
                                 <a href="{{ route('pegawai.show', $item->id) }}" class="btn-action btn-action-view"><i class="fas fa-eye"></i></a>

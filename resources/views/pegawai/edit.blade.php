@@ -62,12 +62,35 @@
                 <input type="text" name="unit_id" class="form-control" value="{{ $data->unit_id }}" required>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-bold">Tanggal Masuk</label>
-                <input type="text" name="tanggal_masuk" class="form-control" value="{{ $data->tanggal_masuk }}" required>
+                <label class="form-label fw-semibold">Tanggal Masuk</label>
+                <input type="date" name="tanggal_masuk" class="form-control" value="{{ $data->tanggal_masuk ? $data->tanggal_masuk->format('Y-m-d') : '' }}">
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">No STR (Khusus Nakes)</label>
+                    <input type="text" name="no_str" class="form-control" value="{{ $data->no_str }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Masa Berlaku STR</label>
+                    <input type="date" name="tanggal_berakhir_str" class="form-control" value="{{ $data->tanggal_berakhir_str ? $data->tanggal_berakhir_str->format('Y-m-d') : '' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">No SIP (Khusus Nakes)</label>
+                    <input type="text" name="no_sip" class="form-control" value="{{ $data->no_sip }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Masa Berlaku SIP</label>
+                    <input type="date" name="tanggal_berakhir_sip" class="form-control" value="{{ $data->tanggal_berakhir_sip ? $data->tanggal_berakhir_sip->format('Y-m-d') : '' }}">
+                </div>
             </div>
             <div class="mb-3">
-                <label class="form-label fw-bold">Status Aktif</label>
-                <input type="text" name="status_aktif" class="form-control" value="{{ $data->status_aktif }}" required>
+                <label class="form-label fw-semibold">Status Aktif</label>
+                <select name="status_aktif" class="form-control" required>
+                    <option value="1" {{ $data->status_aktif == 1 ? 'selected' : '' }}>Aktif</option>
+                    <option value="0" {{ $data->status_aktif == 0 ? 'selected' : '' }}>Nonaktif</option>
+                </select>
             </div>
             <hr>
             <div class="text-end mt-3">

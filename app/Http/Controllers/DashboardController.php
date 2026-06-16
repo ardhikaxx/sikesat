@@ -76,9 +76,39 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // 8. Alert SIP & STR Pegawai Kadaluarsa
+        $now = Carbon::now();
+        $thirtyDays = Carbon::now()->addDays(30);
+
+        $alertSipStr = DB::table('pegawais')
+            ->where('status_aktif', 1)
+            ->where(function($query) use ($now, $thirtyDays) {
+                $query->whereNotNull('tanggal_berakhir_sip')
+                      ->where('tanggal_berakhir_sip', '<=', $thirtyDays)
+                      ->orWhere(function($q) use ($now, $thirtyDays) {
+                          $q->whereNotNull('tanggal_berakhir_str')
+                            ->where('tanggal_berakhir_str', '<=', $thirtyDays);
+                      });
+            })
+            ->select('nama', 'jabatan', 'no_sip', 'tanggal_berakhir_sip', 'no_str', 'tanggal_berakhir_str')
+            ->orderByRaw('LEAST(COALESCE(tanggal_berakhir_sip, "2099-12-31"), COALESCE(tanggal_berakhir_str, "2099-12-31")) ASC')
+            ->limit(5)
+            ->get();
+
+        $countAlertSipStr = DB::table('pegawais')
+            ->where('status_aktif', 1)
+            ->where(function($query) use ($thirtyDays) {
+                $query->whereNotNull('tanggal_berakhir_sip')
+                      ->where('tanggal_berakhir_sip', '<=', $thirtyDays)
+                      ->orWhere(function($q) use ($thirtyDays) {
+                          $q->whereNotNull('tanggal_berakhir_str')
+                            ->where('tanggal_berakhir_str', '<=', $thirtyDays);
+                      });
+            })->count();
+
         return view('dashboard', compact(
             'year', 'totalPendapatan', 'totalPengeluaran', 'sisaKas', 'totalKunjungan',
-            'trendPendapatan', 'trendPengeluaran', 'pieLabels', 'pieData', 'stokMenipis'
+            'trendPendapatan', 'trendPengeluaran', 'pieLabels', 'pieData', 'stokMenipis', 'alertSipStr', 'countAlertSipStr'
         ));
     }
 }
