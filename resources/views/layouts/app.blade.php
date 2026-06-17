@@ -381,14 +381,15 @@
 
         // Global confirmation for delete buttons
         document.addEventListener('DOMContentLoaded', function() {
-            const deleteForms = document.querySelectorAll('form[action*="destroy"], form.form-delete');
+            // Select all forms that have an inline onsubmit with the word 'confirm'
+            const deleteForms = document.querySelectorAll('form[onsubmit*="confirm"], form[action*="destroy"], form.form-delete');
             deleteForms.forEach(form => {
                 // remove the standard JS confirm if it exists
                 form.removeAttribute('onsubmit');
                 
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    SikeAlert.konfirmasi('Hapus Data?', 'Data yang dihapus tidak dapat dikembalikan!', function() {
+                    SikeAlert.konfirmasi('Konfirmasi Tindakan', 'Apakah Anda yakin ingin melanjutkan? Data yang terhapus tidak dapat dikembalikan!', function() {
                         form.submit();
                     });
                 });
