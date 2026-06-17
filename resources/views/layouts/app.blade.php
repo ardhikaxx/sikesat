@@ -283,9 +283,6 @@
             <a href="{{ route('unit-pelayanan.index') }}" class="nav-item-link {{ request()->routeIs('unit-pelayanan.*') ? 'active' : '' }}">
                 <i class="fas fa-sitemap"></i> Unit Pelayanan
             </a>
-            <a href="{{ route('supplier.index') }}" class="nav-item-link {{ request()->routeIs('supplier.*') ? 'active' : '' }}">
-                <i class="fas fa-truck"></i> Supplier
-            </a>
             <a href="{{ route('kontrak.index') }}" class="nav-item-link {{ request()->routeIs('kontrak.*') ? 'active' : '' }}">
                 <i class="fas fa-handshake"></i> Manajemen Kontrak
             </a>
