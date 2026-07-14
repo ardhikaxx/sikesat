@@ -1,4 +1,4 @@
-<br/>
+﻿<br/>
 <div align="center">
   <a href="#">
     <img src="https://img.icons8.com/?size=256&id=114002&format=png" alt="Logo" width="80" height="80">
@@ -114,7 +114,7 @@ Jika project ini bermanfaat, Anda dapat mendukung pengembangan selanjutnya melal
 
 <div align="center">
 
-![QRIS](public/assets/qris.png)
+<img src="public/assets/qris.png" alt="QRIS" width="250" />
 
 **Scan QRIS di atas untuk berdonasi**
 
